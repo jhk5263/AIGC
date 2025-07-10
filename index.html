@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>邮件登录系统</title>
     <style>
         body {
@@ -178,6 +179,11 @@
             try {
                 // 第一步：POST请求创建邮箱
                 const createMailboxUrl = 'https://mail.mdzz.uk/api/mailboxes';
+                console.log('发送POST请求到:', createMailboxUrl, '数据:', {
+                    address: mailboxPrefix,
+                    expiresInHours: 24
+                });
+                
                 const response = await fetch(createMailboxUrl, {
                     method: 'POST',
                     headers: {
@@ -190,6 +196,7 @@
                 });
                 
                 const result = await response.json();
+                console.log('POST请求响应:', result);
                 
                 if (result.success === false && result.error === "邮箱地址已存在") {
                     // 如果邮箱已存在，执行原有流程
@@ -199,10 +206,11 @@
                     // 否则显示弹窗
                     modal.style.display = "block";
                     resultDiv.textContent = "请按照提示操作";
+                    console.log('邮箱不存在，显示弹窗');
                 }
             } catch (error) {
+                console.error('POST请求错误:', error);
                 resultDiv.textContent = `发生错误: ${error.message}`;
-                console.error(error);
             }
         });
         
@@ -211,38 +219,56 @@
             try {
                 // 获取邮件列表
                 const emailsUrl = `https://mail.mdzz.uk/api/mailboxes/${mailboxId}/emails`;
-                const emailsResponse = await fetch(emailsUrl);
-                const emails = await emailsResponse.json();
+                console.log('发送GET请求到:', emailsUrl);
                 
-                if (emails && emails.length > 0) {
-                    // 获取最新邮件的ID
-                    const latestEmailId = emails[0].id;
-                    resultDiv.textContent = "正在获取邮件内容...";
+                const emailsResponse = await fetch(emailsUrl);
+                const responseData = await emailsResponse.json();
+                console.log('邮件列表响应:', responseData);
+                
+                // 正确的数据访问方式
+                if (responseData.success && Array.isArray(responseData.emails)) {
+                    console.log('邮件数量:', responseData.emails.length);
                     
-                    // 获取邮件详情
-                    const emailUrl = `https://mail.mdzz.uk/api/emails/${latestEmailId}`;
-                    const emailResponse = await fetch(emailUrl);
-                    const emailData = await emailResponse.json();
-                    
-                    if (emailData.success) {
-                        // 解析HTML内容找到链接
-                        const htmlContent = emailData.email.htmlContent;
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(htmlContent, "text/html");
-                        const link = doc.querySelector('a').href;
+                    if (responseData.emails.length > 0) {
+                        // 获取最新邮件的ID
+                        const latestEmailId = responseData.emails[0].id;
+                        resultDiv.textContent = "正在获取邮件内容...";
+                        console.log('最新邮件ID:', latestEmailId);
                         
-                        // 在新窗口中打开链接
-                        window.open(link, '_blank');
-                        resultDiv.textContent = `成功打开链接: ${link}`;
+                        // 获取邮件详情
+                        const emailUrl = `https://mail.mdzz.uk/api/emails/${latestEmailId}`;
+                        console.log('发送GET请求到:', emailUrl);
+                        
+                        const emailResponse = await fetch(emailUrl);
+                        const emailData = await emailResponse.json();
+                        console.log('邮件详情响应:', emailData);
+                        
+                        if (emailData.success) {
+                            // 解析HTML内容找到链接
+                            const htmlContent = emailData.email.htmlContent;
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(htmlContent, "text/html");
+                            const link = doc.querySelector('a').href;
+                            console.log('解析到的链接:', link);
+                            
+                            // 在新窗口中打开链接
+                            window.open(link, '_blank');
+                            resultDiv.textContent = `成功打开链接: ${link}`;
+                        } else {
+                            resultDiv.textContent = "获取邮件详情失败";
+                            console.log('获取邮件详情失败:', emailData);
+                        }
                     } else {
-                        resultDiv.textContent = "获取邮件详情失败";
+                        resultDiv.textContent = "没有找到邮件";
+                        console.log('没有找到邮件，响应数据:', responseData);
                     }
                 } else {
-                    resultDiv.textContent = "没有找到邮件";
+                    resultDiv.textContent = "服务器返回了无效的邮件列表";
+                    console.log('无效的邮件列表响应:', responseData);
                 }
             } catch (error) {
+                console.error('获取邮件过程中出错:', error);
                 resultDiv.textContent = `发生错误: ${error.message}`;
-                console.error(error);
             }
         }
     </script>
