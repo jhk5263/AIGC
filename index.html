@@ -223,21 +223,21 @@
                 
                 const emailsResponse = await fetch(emailsUrl);
                 const responseData = await emailsResponse.json();
-                console.log('邮件列表响应:', responseData);
+                //console.log('邮件列表响应:', responseData);
                 
                 // 正确的数据访问方式
                 if (responseData.success && Array.isArray(responseData.emails)) {
-                    console.log('邮件数量:', responseData.emails.length);
+                    //console.log('邮件数量:', responseData.emails.length);
                     
                     if (responseData.emails.length > 0) {
                         // 获取最新邮件的ID
                         const latestEmailId = responseData.emails[0].id;
                         resultDiv.textContent = "正在获取邮件内容...";
-                        console.log('最新邮件ID:', latestEmailId);
+                        //console.log('最新邮件ID:', latestEmailId);
                         
                         // 获取邮件详情
                         const emailUrl = `https://mail.mdzz.uk/api/emails/${latestEmailId}`;
-                        console.log('发送GET请求到:', emailUrl);
+                        //console.log('发送GET请求到:', emailUrl);
                         
                         const emailResponse = await fetch(emailUrl);
                         const emailData = await emailResponse.json();
