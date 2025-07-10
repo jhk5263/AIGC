@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>邮件登录系统</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        input {
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            flex-grow: 1;
+        }
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        #loginBtn {
+            background-color: #4CAF50;
+            color: white;
+            width: 100%;
+        }
+        #loginBtn:hover {
+            background-color: #45a049;
+        }
+        #copyBtn {
+            background-color: #2196F3;
+            color: white;
+        }
+        #copyBtn:hover {
+            background-color: #0b7dda;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+        }
+        .close {
+            color: #aaa;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: black;
+        }
+        .success-message {
+            color: #4CAF50;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>邮件登录系统</h1>
+        <div class="input-group">
+            <input type="text" id="mailbox_id" placeholder="请输入邮箱ID或完整邮箱" required>
+            <button id="copyBtn">复制邮箱</button>
+        </div>
+        <button id="loginBtn">登录</button>
+        <div id="result"></div>
+        <div id="copySuccess" class="success-message">已复制到剪贴板！</div>
+    </div>
+
+    <!-- 弹窗模态框 -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>请重新点击一次"continue with Email"</p>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const loginBtn = document.getElementById('loginBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const mailboxInput = document.getElementById('mailbox_id');
+        const resultDiv = document.getElementById('result');
+        const modal = document.getElementById('myModal');
+        const closeBtn = document.querySelector('.close');
+        const copySuccess = document.getElementById('copySuccess');
+        
+        // 关闭弹窗
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+        
+        // 提取邮箱前缀
+        function getMailboxPrefix(input) {
+            const trimmed = input.trim();
+            const atIndex = trimmed.indexOf('@');
+            return atIndex === -1 ? trimmed : trimmed.substring(0, atIndex);
+        }
+        
+        // 复制邮箱地址
+        copyBtn.addEventListener('click', function() {
+            const mailboxPrefix = getMailboxPrefix(mailboxInput.value);
+            if (!mailboxPrefix) {
+                resultDiv.textContent = "请输入邮箱ID";
+                return;
+            }
+            
+            const fullEmail = mailboxPrefix + '@zaunist.com';
+            navigator.clipboard.writeText(fullEmail).then(() => {
+                copySuccess.style.display = 'block';
+                setTimeout(() => {
+                    copySuccess.style.display = 'none';
+                }, 2000);
+            }).catch(err => {
+                resultDiv.textContent = `复制失败: ${err}`;
+            });
+        });
+        
+        // 点击登录按钮
+        loginBtn.addEventListener('click', async function() {
+            const mailboxPrefix = getMailboxPrefix(mailboxInput.value);
+            
+            if (!mailboxPrefix) {
+                resultDiv.textContent = "请输入邮箱ID";
+                return;
+            }
+
+            resultDiv.textContent = "正在验证邮箱...";
+            
+            try {
+                // 第一步：POST请求创建邮箱
+                const createMailboxUrl = 'https://mail.mdzz.uk/api/mailboxes';
+                const response = await fetch(createMailboxUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        address: mailboxPrefix,
+                        expiresInHours: 24
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success === false && result.error === "邮箱地址已存在") {
+                    // 如果邮箱已存在，执行原有流程
+                    resultDiv.textContent = "邮箱已存在，正在获取邮件...";
+                    await fetchEmails(mailboxPrefix);
+                } else {
+                    // 否则显示弹窗
+                    modal.style.display = "block";
+                    resultDiv.textContent = "请按照提示操作";
+                }
+            } catch (error) {
+                resultDiv.textContent = `发生错误: ${error.message}`;
+                console.error(error);
+            }
+        });
+        
+        // 获取邮件并处理
+        async function fetchEmails(mailboxId) {
+            try {
+                // 获取邮件列表
+                const emailsUrl = `https://mail.mdzz.uk/api/mailboxes/${mailboxId}/emails`;
+                const emailsResponse = await fetch(emailsUrl);
+                const emails = await emailsResponse.json();
+                
+                if (emails && emails.length > 0) {
+                    // 获取最新邮件的ID
+                    const latestEmailId = emails[0].id;
+                    resultDiv.textContent = "正在获取邮件内容...";
+                    
+                    // 获取邮件详情
+                    const emailUrl = `https://mail.mdzz.uk/api/emails/${latestEmailId}`;
+                    const emailResponse = await fetch(emailUrl);
+                    const emailData = await emailResponse.json();
+                    
+                    if (emailData.success) {
+                        // 解析HTML内容找到链接
+                        const htmlContent = emailData.email.htmlContent;
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(htmlContent, "text/html");
+                        const link = doc.querySelector('a').href;
+                        
+                        // 在新窗口中打开链接
+                        window.open(link, '_blank');
+                        resultDiv.textContent = `成功打开链接: ${link}`;
+                    } else {
+                        resultDiv.textContent = "获取邮件详情失败";
+                    }
+                } else {
+                    resultDiv.textContent = "没有找到邮件";
+                }
+            } catch (error) {
+                resultDiv.textContent = `发生错误: ${error.message}`;
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
