@@ -3,6 +3,33 @@
 <head>
     <meta charset="utf-8">
     <title>邮件登录系统</title>
+        <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BR7T2NSR4N"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        
+        // 替换为你的GA4测量ID
+        gtag('config', 'G-BR7T2NSR4N');
+        
+        // 跟踪页面来源
+        function trackTrafficSource() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const source = urlParams.get('utm_source') || 'direct';
+            const medium = urlParams.get('utm_medium') || 'none';
+            const campaign = urlParams.get('utm_campaign') || 'none';
+            
+            gtag('event', 'traffic_source', {
+                'source': source,
+                'medium': medium,
+                'campaign': campaign
+            });
+        }
+        
+        // 页面加载时执行跟踪
+        window.addEventListener('load', trackTrafficSource);
+    </script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
