@@ -229,14 +229,14 @@
                 "cxianyu004",  // 必须精确匹配
                 "cxianyu006",  // 必须精确匹配
                 "cxianyu007",  // 必须精确匹配
-
+                "chikf83",
 
             ];
         
             // 2. 检查是否在白名单内
             const isAllowed = allowedMailboxes.some(prefix => {
                 // cxianyu 必须精确匹配
-                if (prefix.startsWith("chw")) {
+                if (prefix.startsWith("ch")) {
                     return mailboxPrefix === prefix;
                 }
                 if (prefix.startsWith("cxianyu")) {
