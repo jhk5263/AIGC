@@ -202,26 +202,58 @@
             }
 
             
-         // 1. 检查是否是封禁的邮箱（cxianyu005）
-            if (mailboxPrefix === "cxianyu005") {
-                modal.style.display = "block";
-                resultDiv.textContent = "该邮箱已被封禁";
-                return;
-            }
+         // // 1. 检查是否是封禁的邮箱（cxianyu005）
+         //    if (mailboxPrefix === "cxianyu005") {
+         //        modal.style.display = "block";
+         //        resultDiv.textContent = "该邮箱已被封禁";
+         //        return;
+         //    }
         
-            // 2. 检查是否是允许的 cxianyu00x 邮箱（001-006，除了005）
-            const isCxianyuAllowed = /^cxianyu\d{3}$/.test(mailboxPrefix) && mailboxPrefix !== "cxianyu005";
+         //    // 2. 检查是否是允许的 cxianyu00x 邮箱（001-006，除了005）
+         //    const isCxianyuAllowed = /^cxianyu\d{3}$/.test(mailboxPrefix) && mailboxPrefix !== "cxianyu005";
             
-            // 3. 检查是否是客户提供的自定义前缀（如 chwio 开头）
-            const isCustomPrefix = mailboxPrefix.startsWith("chw"); // 假设客户提供的前缀是 chw
+         //    // 3. 检查是否是客户提供的自定义前缀（如 chwio 开头）
+         //    const isCustomPrefix = mailboxPrefix.startsWith("chw"); // 假设客户提供的前缀是 chw
             
-            // 如果不符合以上任何条件，弹窗提示
-            if (!isCxianyuAllowed && !isCustomPrefix) {
+         //    // 如果不符合以上任何条件，弹窗提示
+         //    if (!isCxianyuAllowed && !isCustomPrefix) {
+         //        modal.style.display = "block";
+         //        resultDiv.textContent = "邮箱不存在请检查！";
+         //        return;
+         //    }
+         // 1. 定义允许的邮箱（白名单）
+            const allowedMailboxes = [
+                "cxianyu001",  // 必须精确匹配
+                "cxianyu002",  // 必须精确匹配
+                "cxianyu003",  // 必须精确匹配
+                "cxianyu004",  // 必须精确匹配
+                "cxianyu006",  // 必须精确匹配
+                "cxianyu007",  // 必须精确匹配
+
+
+            ];
+        
+            // 2. 检查是否在白名单内
+            const isAllowed = allowedMailboxes.some(prefix => {
+                // cxianyu 必须精确匹配
+                if (prefix.startsWith("chw")) {
+                    return mailboxPrefix === prefix;
+                }
+                if (prefix.startsWith("cxianyu")) {
+                    return mailboxPrefix === prefix;
+                }
+                // 其他前缀允许自由扩展
+                else {
+                    return mailboxPrefix.startsWith(prefix);
+                }
+            });
+        
+            // 3. 如果不在白名单，弹窗阻止
+            if (!isAllowed) {
                 modal.style.display = "block";
-                resultDiv.textContent = "邮箱不存在请检查！";
+                resultDiv.textContent = "邮箱不存在请检查！或被封禁，与我联系GetxyAIGc";
                 return;
             }
-
 
             
             resultDiv.textContent = "正在验证邮箱...";
