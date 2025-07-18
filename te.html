@@ -211,52 +211,51 @@
         
         // 点击登录按钮
         loginBtn.addEventListener('click', async function() {
-              const now = new Date();
-              const timestamp = now.toLocaleString();
-              
-              // 获取输入内容
-              const inputText = mailboxInput.value.trim();
-              
-              // 获取IP地址（通过Cloudflare Worker获取真实IP）
-              let ipAddress = 'unknown';
-              try {
-                  // 方法1：使用Cloudflare提供的客户端IP（更可靠）
-                  const ipResponse = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
-                  const text = await ipResponse.text();
-                  const ipMatch = text.match(/ip=([\d.]+)/);
-                  ipAddress = ipMatch ? ipMatch[1] : 'unknown';
-                  
-                  // 方法2：备用方案（如果方法1不可用）
-                  if (ipAddress === 'unknown') {
-                      const ipApiResponse = await fetch('https://api.ipify.org?format=json');
-                      const ipData = await ipApiResponse.json();
-                      ipAddress = ipData.ip;
-                  }
-              } catch (error) {
-                  console.error('获取IP失败:', error);
-              }
-              
-              // 发送日志到Cloudflare Worker
-              try {
-                  const workerUrl = 'https://jilu.haway.dpdns.org/api/log';
-                  const logResponse = await fetch(workerUrl, {
-                      method: 'POST',
-                      headers: {
-                          'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({
-                          timestamp,
-                          ip: ipAddress,
-                          input: inputText
-                      })
-                  });
-                  
-                  if (!logResponse.ok) {
-                      console.error('日志记录失败:', await logResponse.text());
-                  }
-              } catch (error) {
-                  console.error('发送日志失败:', error);
-              }
+    const timestamp = new Date().toLocaleString();
+    const inputText = mailboxInput.value.trim();
+    
+    // 获取IP地址
+    let ipAddress = 'unknown';
+    try {
+        const ipResponse = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
+        const text = await ipResponse.text();
+        const ipMatch = text.match(/ip=([\d.]+)/);
+        ipAddress = ipMatch ? ipMatch[1] : 'unknown';
+    } catch (error) {
+        console.error('获取IP失败:', error);
+    }
+    
+    // 发送日志到Cloudflare Worker
+    try {
+        const workerUrl = 'https://jilu.haway.dpdns.org/api/log';
+        const logResponse = await fetch(workerUrl, {
+            method: 'POST',
+            mode: 'cors', // 明确指定CORS模式
+            headers: {
+                'Content-Type': 'application/json',
+                // 如果需要认证，添加Authorization头
+                // 'Authorization': 'Bearer your-secret-key'
+            },
+            body: JSON.stringify({
+                timestamp,
+                ip: ipAddress,
+                input: inputText
+            })
+        });
+        
+        if (!logResponse.ok) {
+            const errorData = await logResponse.json();
+            console.error('日志记录失败:', errorData.error || '未知错误');
+        } else {
+            const result = await logResponse.json();
+            console.log('日志记录成功:', result);
+        }
+    } catch (error) {
+        console.error('发送日志失败:', error);
+    }
+
+
+            
             const mailboxPrefix = getMailboxPrefix(mailboxInput.value);
             
             if (!mailboxPrefix) {
