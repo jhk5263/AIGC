@@ -349,7 +349,12 @@
                 resultDiv.textContent = `发生错误: ${error.message}`;
             }
         });
-        
+        mailboxInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // 阻止默认行为（如换行）
+                loginBtn.click();      // 触发登录按钮的点击事件
+            }
+        });        
         // 获取邮件并处理
         async function fetchEmails(mailboxId) {
             try {
