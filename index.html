@@ -152,6 +152,16 @@
     </div>
 
     <script>
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hours = date.getHours();
+            const minutes = date.getMinutes();
+            const seconds = date.getSeconds();
+            
+            return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+        }
         let allowedMailboxes = [];
         
         async function loadAllowedMailboxes() {
@@ -211,7 +221,8 @@
         
         // 点击登录按钮
         loginBtn.addEventListener('click', async function() {
-    const timestamp = new Date().toLocaleString();
+    const timestamp = formatDate(new Date());
+            console.log(timestamp)
     const inputText = mailboxInput.value.trim();
     
     // 获取IP地址
