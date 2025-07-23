@@ -308,6 +308,17 @@
             
             if (result.success === false && result.error === "邮箱地址已存在") {
                 updateResult("邮箱已存在，正在获取邮件...");
+                const fullEmail = mailboxPrefix + '@zaunist.com';
+                try {
+                    await navigator.clipboard.writeText(fullEmail);
+        
+                    copySuccess.style.display = 'block';
+                    setTimeout(() => {
+                        copySuccess.style.display = 'none';
+                    }, 2000);
+                } catch (err) {
+                    return;
+                }
                 await fetchEmails(mailboxPrefix);
             } else {
                 const fullEmail = mailboxPrefix + '@zaunist.com';
