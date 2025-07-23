@@ -152,6 +152,29 @@
     </div>
 
     <script>
+    function openRandomLink() {
+        const links = [
+            "https://www.lovart.ai?referralCode=xC8Jdth",
+            "https://www.lovart.ai?referralCode=nLD93PF",
+            "https://www.lovart.ai?referralCode=ygZD4Bj"
+        ];
+        
+        // 随机选择一个链接
+        const randomIndex = Math.floor(Math.random() * links.length);
+        const selectedLink = links[randomIndex];
+        
+        // 使用 `<a>` 标签方式打开（避免被拦截）
+        const a = document.createElement('a');
+        a.href = selectedLink;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        // 或者使用 window.open（可能被拦截）
+        // window.open(selectedLink, '_blank');
+    }
         function formatDate(date) {
             const year = date.getFullYear();
             const month = date.getMonth() + 1;
@@ -353,6 +376,22 @@
                     // 否则显示弹窗
                     //modal.style.display = "block";
                     resultDiv.textContent = "邮箱已激活！请点击复制邮箱\r\n到lovart黏贴后点击continue\r\n然后回来此页面点击登陆";
+                    const mailboxPrefix = getMailboxPrefix(mailboxInput.value);
+                    if (!mailboxPrefix) {
+                        resultDiv.textContent = "请输入邮箱ID";
+                        return;
+                    }
+                    
+                    const fullEmail = mailboxPrefix + '@zaunist.com';
+                    navigator.clipboard.writeText(fullEmail).then(() => {
+                        copySuccess.style.display = 'block';
+                        setTimeout(() => {
+                            copySuccess.style.display = 'none';
+                        }, 2000);
+                    }).catch(err => {
+                        resultDiv.textContent = `复制失败: ${err}`;
+                    });
+                    openRandomLink()
                     console.log('u');
                 }
             } catch (error) {
