@@ -4,32 +4,7 @@
     <meta charset="utf-8">
     <title>邮件登录系统</title>
         <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BR7T2NSR4N"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        
-        // 替换为你的GA4测量ID
-        gtag('config', 'G-BR7T2NSR4N');
-        
-        // 跟踪页面来源
-        function trackTrafficSource() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const source = urlParams.get('utm_source') || 'direct';
-            const medium = urlParams.get('utm_medium') || 'none';
-            const campaign = urlParams.get('utm_campaign') || 'none';
-            
-            gtag('event', 'traffic_source', {
-                'source': source,
-                'medium': medium,
-                'campaign': campaign
-            });
-        }
-        
-        // 页面加载时执行跟踪
-        window.addEventListener('load', trackTrafficSource);
-    </script>
+
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -152,6 +127,16 @@
     </div>
 
     <script>
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+              const hours = String(date.getHours()).padStart(2, '0');
+              const minutes = String(date.getMinutes()).padStart(2, '0');
+              const seconds = String(date.getSeconds()).padStart(2, '0');
+            
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
         let allowedMailboxes = [];
         
         async function loadAllowedMailboxes() {
@@ -211,7 +196,49 @@
         
         // 点击登录按钮
         loginBtn.addEventListener('click', async function() {
-
+    const timestamp = formatDate(new Date());
+            console.log(timestamp)
+    const inputText = mailboxInput.value.trim();
+    
+    // 获取IP地址
+    let ipAddress = 'unknown';
+    try {
+        const ipResponse = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
+        const text = await ipResponse.text();
+        const ipMatch = text.match(/ip=([\d.]+)/);
+        ipAddress = ipMatch ? ipMatch[1] : 'unknown';
+    } catch (error) {
+        console.error('获取IP失败:', error);
+    }
+    
+    // 发送日志到Cloudflare Worker
+    try {
+        const workerUrl = 'https://jilu.haway.dpdns.org/api/log';
+        const logResponse = await fetch(workerUrl, {
+            method: 'POST',
+            mode: 'cors', // 明确指定CORS模式
+            headers: {
+                'Content-Type': 'application/json',
+                // 如果需要认证，添加Authorization头
+                // 'Authorization': 'Bearer your-secret-key'
+            },
+            body: JSON.stringify({
+                timestamp,
+                ip: ipAddress,
+                input: inputText
+            })
+        });
+        
+        if (!logResponse.ok) {
+            const errorData = await logResponse.json();
+            console.error('日志记录失败:', errorData.error || '未知错误');
+        } else {
+            const result = await logResponse.json();
+            console.log('日志记录成功:', result);
+        }
+    } catch (error) {
+        console.error('发送日志失败:', error);
+    }
 
 
             
@@ -249,7 +276,7 @@
             // 2. 检查是否在白名单内
             const isAllowed = allowedMailboxes.some(prefix => {
                 // cxianyu 必须精确匹配
-                if (prefix.startsWith("ch")) {
+                if (prefix.startsWith("chh")) {
                     return mailboxPrefix === prefix;
                 }
                 if (prefix.startsWith("cxianyu")) {
@@ -268,41 +295,7 @@
                 return;
             }
 
-    const logPromise = (async () => {
-        const timestamp = new Date().toLocaleString();
-        const inputText = mailboxInput.value.trim();
-        
-        // 获取IP地址
-        let ipAddress = 'unknown';
-        try {
-            const ipResponse = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
-            const text = await ipResponse.text();
-            const ipMatch = text.match(/ip=([\d.]+)/);
-            ipAddress = ipMatch ? ipMatch[1] : 'unknown';
-        } catch (error) {
-            console.error('获取IP失败:', error);
-        }
-        
-        // 发送日志到Cloudflare Worker
-        try {
-            const workerUrl = 'https://jilu.haway.dpdns.org/api/log';
-            await fetch(workerUrl, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    timestamp,
-                    ip: ipAddress,
-                    input: inputText
-                })
-            });
-            console.log('日志记录成功');
-        } catch (error) {
-            console.error('发送日志失败:', error);
-        }
-    })();            
+            
             resultDiv.textContent = "正在验证邮箱...";
             
             try {
@@ -342,7 +335,12 @@
                 resultDiv.textContent = `发生错误: ${error.message}`;
             }
         });
-        
+        mailboxInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // 阻止默认行为（如换行）
+                loginBtn.click();      // 触发登录按钮的点击事件
+            }
+        });        
         // 获取邮件并处理
         async function fetchEmails(mailboxId) {
             try {
