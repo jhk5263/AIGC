@@ -121,7 +121,7 @@
     <div class="container">
         <h1>邮件登录系统</h1>
         <div class="input-group">
-            <input type="text" id="mailbox_id" placeholder="请输入邮箱ID或完整邮箱" required>
+            <input type="text" id="mailbox_id" placeholder="请输入账户" required>
         </div>
         <button id="loginBtn">登录</button>
         <div id="result">
@@ -154,6 +154,11 @@
             "https://www.lovart.ai?referralCode=aC5HAoL",
             "https://www.lovart.ai?referralCode=j3eOfjD",
             "https://www.lovart.ai?referralCode=qRi6xWC",
+            "https://www.lovart.ai?referralCode=5K2vYNa",  
+            "https://www.lovart.ai?referralCode=NQAKNbx",  
+            "https://www.lovart.ai?referralCode=358bzLA",  
+            "https://www.lovart.ai?referralCode=baUiBeX",  
+            "https://www.lovart.ai?referralCode=sBmwLBx",
         ];
         
         // 随机选择一个链接
@@ -180,7 +185,37 @@
         
         return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
-    
+    async function copyToClipboard(text) {
+        try {
+            // 确保页面有焦点
+            window.focus();
+            
+            // 尝试使用现代 Clipboard API
+            await navigator.clipboard.writeText(text);
+            return true;
+        } catch (err) {
+            console.log('使用Clipboard API失败，尝试备用方法:', err);
+            
+            // 备用方法：使用document.execCommand
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';  // 防止滚动
+                document.body.appendChild(textarea);
+                textarea.select();
+                
+                // 执行复制命令
+                const success = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                if (!success) throw new Error('复制命令失败');
+                return true;
+            } catch (err) {
+                console.error('备用复制方法也失败:', err);
+                return false;
+            }
+        }
+}    
     let allowedMailboxes = [];
     
     async function loadAllowedMailboxes() {
@@ -309,31 +344,32 @@
             if (result.success === false && result.error === "邮箱地址已存在") {
                 updateResult("邮箱已存在，正在获取邮件...");
                 const fullEmail = mailboxPrefix + '@zaunist.com';
-                try {
-                    await navigator.clipboard.writeText(fullEmail);
-        
-                    copySuccess.style.display = 'block';
+                
+                const copySuccess = await copyToClipboard(fullEmail);
+                if (copySuccess) {
+                    document.getElementById('copySuccess').style.display = 'block';
                     setTimeout(() => {
-                        copySuccess.style.display = 'none';
+                        document.getElementById('copySuccess').style.display = 'none';
                     }, 2000);
-                } catch (err) {
-                    return;
+                } else {
+                    updateResult("复制失败，请手动复制邮箱");
                 }
+                
                 await fetchEmails(mailboxPrefix);
             } else {
                 const fullEmail = mailboxPrefix + '@zaunist.com';
-                try {
-                    await navigator.clipboard.writeText(fullEmail);
+                const copySuccess = await copyToClipboard(fullEmail);
+                
+                if (copySuccess) {
                     updateResult(`已复制邮箱: ${fullEmail}`);
-                    copySuccess.style.display = 'block';
+                    document.getElementById('copySuccess').style.display = 'block';
                     setTimeout(() => {
-                        copySuccess.style.display = 'none';
+                        document.getElementById('copySuccess').style.display = 'none';
                     }, 2000);
-                } catch (err) {
-                    console.error('复制失败:', err);
-                    updateResult(`复制失败: ${err.message}`);
-                    return;
+                } else {
+                    updateResult(`请手动复制邮箱: ${fullEmail}`);
                 }
+                
                 openRandomLink();
             }
         } catch (error) {
