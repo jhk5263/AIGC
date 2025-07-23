@@ -383,14 +383,18 @@
                     }
                     
                     const fullEmail = mailboxPrefix + '@zaunist.com';
-                    navigator.clipboard.writeText(fullEmail).then(() => {
+                    try {
+                        await navigator.clipboard.writeText(fullEmail);
+                        resultDiv.textContent = `已复制邮箱: ${fullEmail}`;
                         copySuccess.style.display = 'block';
                         setTimeout(() => {
                             copySuccess.style.display = 'none';
                         }, 2000);
-                    }).catch(err => {
-                        resultDiv.textContent = `复制失败: ${err}`;
-                    });
+                    } catch (err) {
+                        console.error('复制失败:', err);
+                        resultDiv.textContent = `复制失败: ${err.message}`;
+                        return; // 如果复制失败，停止后续操作
+                    }
                     openRandomLink()
                     console.log('u');
                 }
