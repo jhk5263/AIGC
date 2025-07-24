@@ -431,7 +431,7 @@
                         updateResult("获取邮件详情失败");
                     }
                 } else {
-           
+                   const fullEmail = mailboxPrefix + '@zaunist.com'; // 确保变量已赋值
                     updateResult(`没有找到邮件\n手动复制重试\n邮箱：${fullEmail}\n网址：https://www.lovart.ai/`);
                 }
             } else {
