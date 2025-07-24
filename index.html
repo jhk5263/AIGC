@@ -384,7 +384,8 @@
     // 更新结果区域（保留帮助链接）
     function updateResult(message) {
         const helpLink = document.querySelector('.help-link').outerHTML;
-        resultDiv.innerHTML = `<div>${message}</div>${helpLink}`;
+        const formattedMessage = message.replace(/\n/g, '<br>');
+        resultDiv.innerHTML = `<div>${formattedMessage}</div>${helpLink}`;
     }
     
     mailboxInput.addEventListener('keypress', function(event) {
@@ -430,7 +431,8 @@
                         updateResult("获取邮件详情失败");
                     }
                 } else {
-                    updateResult("没有找到邮件");
+                   const fullEmail = mailboxId + '@zaunist.com'; // 确保变量已赋值
+                    updateResult(`没有找到邮件\n\n手动复制重试\n邮箱：${fullEmail}\n网址：https://www.lovart.ai?referralCode=xC8Jdth`);
                 }
             } else {
                 updateResult("服务器返回了无效的邮件列表");
