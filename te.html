@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="refresh" content="43200">
     <meta charset="utf-8">
     <title>邮件登录系统</title>
     <style>
@@ -143,27 +144,34 @@
     <script>
     function openRandomLink() {
         const links = [
-            "https://www.lovart.ai?referralCode=xC8Jdth",
-            "https://www.lovart.ai?referralCode=nLD93PF",
-            "https://www.lovart.ai?referralCode=ygZD4Bj",
-            "https://www.lovart.ai?referralCode=jPwqbFE",
-            "https://www.lovart.ai?referralCode=2krMDti",
-            "https://www.lovart.ai?referralCode=dM6ibOD",
-            "https://www.lovart.ai?referralCode=SuoQX19",
-            "https://www.lovart.ai?referralCode=HjuuEn6",
-            "https://www.lovart.ai?referralCode=aC5HAoL",
-            "https://www.lovart.ai?referralCode=j3eOfjD",
-            "https://www.lovart.ai?referralCode=qRi6xWC",
-            "https://www.lovart.ai?referralCode=5K2vYNa",  
-            "https://www.lovart.ai?referralCode=NQAKNbx",  
-            "https://www.lovart.ai?referralCode=358bzLA",  
-            "https://www.lovart.ai?referralCode=TSx3NTs", 
-           "https://www.lovart.ai?referralCode=GN9vaWb",  
-            "https://www.lovart.ai?referralCode=CdGwCLC",  
-            "https://www.lovart.ai?referralCode=9TrMEfx",  
-            "https://www.lovart.ai?referralCode=cqAYyIz",
-            "https://www.lovart.ai?referralCode=baUiBeX",  
-            "https://www.lovart.ai?referralCode=sBmwLBx",
+            "https://www.lovart.ai?referralCode=xC8Jdth",//gmail
+            "https://www.lovart.ai?referralCode=nLD93PF",//jhk5263@hotmail.com
+            "https://www.lovart.ai?referralCode=ygZD4Bj",//jhk5263@outlook.com
+            "https://www.lovart.ai?referralCode=aC5HAoL",//jhk1
+            "https://www.lovart.ai?referralCode=DQRo7xK",//jhk001
+            "https://www.lovart.ai?referralCode=jPwqbFE",//rao
+            "https://www.lovart.ai?referralCode=TSx3NTs",//rao1
+            "https://www.lovart.ai?referralCode=GN9vaWb",//rao2
+            "https://www.lovart.ai?referralCode=ZPT2crv",//jhk5263@zaunist.com
+            "https://www.lovart.ai?referralCode=2krMDti",//jhk002
+
+
+           //  "https://www.lovart.ai?referralCode=dM6ibOD",
+           //  "https://www.lovart.ai?referralCode=SuoQX19",
+           //  "https://www.lovart.ai?referralCode=HjuuEn6",
+
+           //  "https://www.lovart.ai?referralCode=j3eOfjD",
+           //  "https://www.lovart.ai?referralCode=qRi6xWC",
+           //  "https://www.lovart.ai?referralCode=5K2vYNa",  
+           //  "https://www.lovart.ai?referralCode=NQAKNbx",  
+           //  "https://www.lovart.ai?referralCode=358bzLA",  
+             
+           // "https://www.lovart.ai?referralCode=GN9vaWb",  
+           //  "https://www.lovart.ai?referralCode=CdGwCLC",  
+           //  "https://www.lovart.ai?referralCode=9TrMEfx",  
+           //  "https://www.lovart.ai?referralCode=cqAYyIz",
+           //  "https://www.lovart.ai?referralCode=baUiBeX",  
+
         ];
         
         // 随机选择一个链接
@@ -376,7 +384,8 @@
     // 更新结果区域（保留帮助链接）
     function updateResult(message) {
         const helpLink = document.querySelector('.help-link').outerHTML;
-        resultDiv.innerHTML = `<div>${message}</div>${helpLink}`;
+        const formattedMessage = message.replace(/\n/g, '<br>');
+        resultDiv.innerHTML = `<div>${formattedMessage}</div>${helpLink}`;
     }
     
     mailboxInput.addEventListener('keypress', function(event) {
@@ -422,7 +431,7 @@
                         updateResult("获取邮件详情失败");
                     }
                 } else {
-                    updateResult("没有找到邮件");
+                    updateResult('没有找到邮件\n手动重试\n邮件：${fullEmail}\n网址：https://www.lovart.ai/');
                 }
             } else {
                 updateResult("服务器返回了无效的邮件列表");
