@@ -348,17 +348,7 @@
             
             if (result.success === false && result.error === "邮箱地址已存在") {
                 updateResult("邮箱已存在，正在获取邮件...");
-                const fullEmail = mailboxPrefix + '@zaunist.com';
-                
-                const copySuccess = await copyToClipboard(fullEmail);
-                if (copySuccess) {
-                    document.getElementById('copySuccess').style.display = 'block';
-                    setTimeout(() => {
-                        document.getElementById('copySuccess').style.display = 'none';
-                    }, 2000);
-                } else {
-                    updateResult("复制失败，请手动复制邮箱");
-                }
+
                 
                 await fetchEmails(mailboxPrefix);
             } else {
