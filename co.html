@@ -273,42 +273,42 @@
         const inputText = mailboxInput.value.trim();
         
         // 获取IP地址
-        let ipAddress = 'unknown';
-        try {
-            const ipResponse = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
-            const text = await ipResponse.text();
-            const ipMatch = text.match(/ip=([\d.]+)/);
-            ipAddress = ipMatch ? ipMatch[1] : 'unknown';
-        } catch (error) {
-            console.error('获取IP失败:', error);
-        }
+        // let ipAddress = 'unknown';
+        // try {
+        //     const ipResponse = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
+        //     const text = await ipResponse.text();
+        //     const ipMatch = text.match(/ip=([\d.]+)/);
+        //     ipAddress = ipMatch ? ipMatch[1] : 'unknown';
+        // } catch (error) {
+        //     console.error('获取IP失败:', error);
+        // }
         
-        // 发送日志到Cloudflare Worker
-        try {
-            const workerUrl = 'https://jilu.haway.dpdns.org/api/log';
-            const logResponse = await fetch(workerUrl, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    timestamp,
-                    ip: ipAddress,
-                    input: inputText
-                })
-            });
+        // // 发送日志到Cloudflare Worker
+        // try {
+        //     const workerUrl = 'https://jilu.haway.dpdns.org/api/log';
+        //     const logResponse = await fetch(workerUrl, {
+        //         method: 'POST',
+        //         mode: 'cors',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify({
+        //             timestamp,
+        //             ip: ipAddress,
+        //             input: inputText
+        //         })
+        //     });
             
-            if (!logResponse.ok) {
-                const errorData = await logResponse.json();
-                console.error('日志记录失败:', errorData.error || '未知错误');
-            } else {
-                const result = await logResponse.json();
-                console.log('日志记录成功:', result);
-            }
-        } catch (error) {
-            console.error('发送日志失败:', error);
-        }
+        //     if (!logResponse.ok) {
+        //         const errorData = await logResponse.json();
+        //         console.error('日志记录失败:', errorData.error || '未知错误');
+        //     } else {
+        //         const result = await logResponse.json();
+        //         console.log('日志记录成功:', result);
+        //     }
+        // } catch (error) {
+        //     console.error('发送日志失败:', error);
+        // }
 
         const mailboxPrefix = getMailboxPrefix(inputText);
         
@@ -339,7 +339,7 @@
         updateResult("正在验证邮箱...");
         
         try {
-            const createMailboxUrl = 'https://mail.mdzz.uk/api/mailboxes';
+            const createMailboxUrl = 'https://mail.taotile.ltd/api/mailboxes';
             const response = await fetch(createMailboxUrl, {
                 method: 'POST',
                 headers: {
@@ -398,7 +398,7 @@
     // 获取邮件并处理
     async function fetchEmails(mailboxId) {
         try {
-            const emailsUrl = `https://mail.mdzz.uk/api/mailboxes/${mailboxId}/emails`;
+            const emailsUrl = `https://mail.taotile.ltd/api/mailboxes/${mailboxId}/emails`;
             const emailsResponse = await fetch(emailsUrl);
             const responseData = await emailsResponse.json();
             
@@ -407,7 +407,7 @@
                     const latestEmailId = responseData.emails[0].id;
                     updateResult("正在获取邮件内容...");
                     
-                    const emailUrl = `https://mail.mdzz.uk/api/emails/${latestEmailId}`;
+                    const emailUrl = `https://mail.taotile.ltd/api/emails/${latestEmailId}`;
                     const emailResponse = await fetch(emailUrl);
                     const emailData = await emailResponse.json();
                     console.log('邮件详情响应:', emailData);
