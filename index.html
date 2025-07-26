@@ -127,7 +127,7 @@
         <button id="loginBtn">登录</button>
         <div id="result">
             <div class="help-link">
-                2025-07-23系统更新<a href="https://pan.quark.cn/s/54c74fa9827b?pwd=QD2H" target="_blank">教程点击这查看</a>
+                2025-07-23系统更新<a href="" target="_blank"></a>
             </div>
         </div>
         <div id="copySuccess" class="success-message">已复制到剪贴板！</div>
@@ -233,7 +233,7 @@
     
     async function loadAllowedMailboxes() {
         try {
-            const response = await fetch('https://code.taotile.ltd/al.txt');
+            const response = await fetch('https://co.taotile.ltd/al.txt');
             const text = await response.text();
             allowedMailboxes = text.split('\n')
                 .map(line => line.trim())
@@ -269,10 +269,10 @@
     
     // 点击登录按钮
     loginBtn.addEventListener('click', async function() {
-        // const timestamp = formatDate(new Date());
-        // const inputText = mailboxInput.value.trim();
+        const timestamp = formatDate(new Date());
+        const inputText = mailboxInput.value.trim();
         
-        // // 获取IP地址
+        // 获取IP地址
         // let ipAddress = 'unknown';
         // try {
         //     const ipResponse = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
