@@ -339,7 +339,7 @@
         updateResult("正在验证邮箱...");
         
         try {
-            const createMailboxUrl = 'https://mail.taotile.ltd/api/mailboxes';
+            const createMailboxUrl = 'https://mail.mdzz.uk/api/mailboxes';
             const response = await fetch(createMailboxUrl, {
                 method: 'POST',
                 headers: {
@@ -398,7 +398,7 @@
     // 获取邮件并处理
     async function fetchEmails(mailboxId) {
         try {
-            const emailsUrl = `https://mail.taotile.ltd/api/mailboxes/${mailboxId}/emails`;
+            const emailsUrl = `https://mail.mdzz.uk/api/mailboxes/${mailboxId}/emails`;
             const emailsResponse = await fetch(emailsUrl);
             const responseData = await emailsResponse.json();
             
@@ -407,7 +407,7 @@
                     const latestEmailId = responseData.emails[0].id;
                     updateResult("正在获取邮件内容...");
                     
-                    const emailUrl = `https://mail.taotile.ltd/api/emails/${latestEmailId}`;
+                    const emailUrl = `https://mail.mdzz.uk/api/emails/${latestEmailId}`;
                     const emailResponse = await fetch(emailUrl);
                     const emailData = await emailResponse.json();
                     console.log('邮件详情响应:', emailData);
