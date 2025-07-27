@@ -111,7 +111,7 @@
         <h1>邮件登录系统</h1>
         <div class="input-group">
             <input type="text" id="mailbox_id" placeholder="请输入邮箱ID或完整邮箱" required>
-            <button id="copyBtn">复制验证码</button>
+            <button id="copyBtn">复制邮箱/验证码</button>
         </div>
         <button id="loginBtn">登录</button>
         <div id="result"></div>
@@ -342,70 +342,62 @@
             }
         });        
         // 获取邮件并处理
-async function fetchEmails(mailboxId) {
-    try {
-        // 1. 获取邮件列表
-        const emailsUrl = `https://mail.taotile.ltd/api/mailboxes/${mailboxId}/emails`;
-        const emailsResponse = await fetch(emailsUrl);
-        const responseData = await emailsResponse.json();
-
-        if (!responseData.success || !Array.isArray(responseData.emails)) {
-            throw new Error("邮件列表获取失败或格式错误");
-        }
-
-        // 2. 处理最新邮件
-        if (responseData.emails.length > 0) {
-            const latestEmailId = responseData.emails[0].id;
-            const emailUrl = `https://mail.taotile.ltd/api/emails/${latestEmailId}`;
-            const emailResponse = await fetch(emailUrl);
-            const emailData = await emailResponse.json();
-
-            if (emailData.success) {
-                const htmlContent = emailData.email.htmlContent;
-                const verificationCode = extractVerificationCode(htmlContent);
-
-                if (verificationCode) {
-                    // 3. 填充验证码到输入框
-                    const inputBox = document.getElementById('mailbox_id');
-                    if (inputBox) {
-                        inputBox.value = verificationCode;
-                        return `验证码已自动填充: ${verificationCode}`;
+        async function fetchEmails(mailboxId) {
+            try {
+                // 获取邮件列表
+                const emailsUrl = `https://mail.taotile.ltd/api/mailboxes/${mailboxId}/emails`;
+                console.log('发送GET请求到:', emailsUrl);
+                
+                const emailsResponse = await fetch(emailsUrl);
+                const responseData = await emailsResponse.json();
+                //console.log('邮件列表响应:', responseData);
+                
+                // 正确的数据访问方式
+                if (responseData.success && Array.isArray(responseData.emails)) {
+                    //console.log('邮件数量:', responseData.emails.length);
+                    
+                    if (responseData.emails.length > 0) {
+                        // 获取最新邮件的ID
+                        const latestEmailId = responseData.emails[0].id;
+                        resultDiv.textContent = "正在获取邮件内容...";
+                        //console.log('最新邮件ID:', latestEmailId);
+                        
+                        // 获取邮件详情
+                        const emailUrl = `https://mail.taotile.ltd/api/emails/${latestEmailId}`;
+                        //console.log('发送GET请求到:', emailUrl);
+                        
+                        const emailResponse = await fetch(emailUrl);
+                        const emailData = await emailResponse.json();
+                        console.log('邮件详情响应:', emailData);
+                        
+                        if (emailData.success) {
+                            // 解析HTML内容找到链接
+                            const htmlContent = emailData.email.htmlContent;
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(htmlContent, "text/html");
+                            const link = doc.querySelector('a').href;
+                            console.log('解析到的链接:', link);
+                            
+                            // 在新窗口中打开链接
+                            window.open(link, '_blank');
+                            resultDiv.textContent = `成功打开链接: ${link}`;
+                        } else {
+                            resultDiv.textContent = "获取邮件详情失败";
+                            console.log('获取邮件详情失败:', emailData);
+                        }
                     } else {
-                        return `验证码提取成功: ${verificationCode}（输入框未找到）`;
+                        resultDiv.textContent = "没有找到邮件";
+                        console.log('没有找到邮件，响应数据:', responseData);
                     }
                 } else {
-                    throw new Error("未找到验证码");
+                    resultDiv.textContent = "服务器返回了无效的邮件列表";
+                    console.log('无效的邮件列表响应:', responseData);
                 }
-            } else {
-                throw new Error("邮件详情获取失败");
+            } catch (error) {
+                console.error('获取邮件过程中出错:', error);
+                resultDiv.textContent = `发生错误: ${error.message}`;
             }
-        } else {
-            throw new Error("未找到任何邮件");
         }
-    } catch (error) {
-        console.error('邮件处理失败:', error);
-        return `错误: ${error.message}`;
-    }
-}
-
-// 辅助函数：从HTML中提取验证码
-function extractVerificationCode(htmlContent) {
-    // 方法1：DOM解析（优先）
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlContent, "text/html");
-    const strongElements = doc.querySelectorAll('strong');
-    
-    for (const element of strongElements) {
-        const text = element.textContent.trim();
-        if (/^\d{6}$/.test(text)) { // 匹配6位数字
-            return text;
-        }
-    }
-
-    // 方法2：正则表达式（备用）
-    const codeMatch = htmlContent.match(/>\s*(\d{6})\s*</);
-    return codeMatch ? codeMatch[1] : null;
-}
     </script>
 </body>
 </html>
