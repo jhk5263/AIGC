@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>邮件登录系统</title>
-        <!-- Google tag (gtag.js) -->
+
 
     <style>
         body {
@@ -141,7 +141,7 @@
         
         async function loadAllowedMailboxes() {
             try {
-                const response = await fetch('https://code.taotile.ltd/al.txt');
+                const response = await fetch('https://co.taotile.ltd/al.txt');
                 const text = await response.text();
                 allowedMailboxes = text.split('\n')
                     .map(line => line.trim())
@@ -205,46 +205,6 @@
     const timestamp = formatDate(new Date());
             console.log(timestamp)
     const inputText = mailboxInput.value.trim();
-    
-    // 获取IP地址
-    let ipAddress = 'unknown';
-    try {
-        const ipResponse = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
-        const text = await ipResponse.text();
-        const ipMatch = text.match(/ip=([\d.]+)/);
-        ipAddress = ipMatch ? ipMatch[1] : 'unknown';
-    } catch (error) {
-        console.error('获取IP失败:', error);
-    }
-    
-    // 发送日志到Cloudflare Worker
-    try {
-        const workerUrl = 'https://jilu.haway.dpdns.org/api/log';
-        const logResponse = await fetch(workerUrl, {
-            method: 'POST',
-            mode: 'cors', // 明确指定CORS模式
-            headers: {
-                'Content-Type': 'application/json',
-                // 如果需要认证，添加Authorization头
-                // 'Authorization': 'Bearer your-secret-key'
-            },
-            body: JSON.stringify({
-                timestamp,
-                ip: ipAddress,
-                input: inputText
-            })
-        });
-        
-        if (!logResponse.ok) {
-            const errorData = await logResponse.json();
-            console.error('日志记录失败:', errorData.error || '未知错误');
-        } else {
-            const result = await logResponse.json();
-            console.log('日志记录成功:', result);
-        }
-    } catch (error) {
-        console.error('发送日志失败:', error);
-    }
 
 
             
