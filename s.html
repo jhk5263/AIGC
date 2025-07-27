@@ -182,8 +182,14 @@
                 resultDiv.textContent = "请输入邮箱ID";
                 return;
             }
+            if (input.includes("验证码:")) {
+                const fullEmail = input.replace("验证码:", ""); // 移除前缀
+                console.log("执行验证码操作:", captcha); // 输出: 837943
+            } else {
+                const fullEmail = mailboxPrefix + '@zaunist.com';
+                console.log("执行其他操作:", input);
+            }
             
-            const fullEmail = mailboxPrefix + '@zaunist.com';
             navigator.clipboard.writeText(fullEmail).then(() => {
                 copySuccess.style.display = 'block';
                 setTimeout(() => {
@@ -368,7 +374,7 @@ async function fetchEmails(mailboxId) {
                     // 3. 填充验证码到输入框
                     const inputBox = document.getElementById('mailbox_id');
                     if (inputBox) {
-                        inputBox.value = verificationCode;
+                        inputBox.value = '验证码:'+verificationCode;
                         return `验证码已自动填充: ${verificationCode}`;
                     } else {
                         return `验证码提取成功: ${verificationCode}（输入框未找到）`;
