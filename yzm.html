@@ -184,10 +184,10 @@
             }
             if (mailboxPrefix.includes("验证码:")) {
                 const fullEmail = input.replace("验证码:", ""); // 移除前缀
-                console.log("执行验证码操作:", captcha); // 输出: 837943
+                console.log("执行验证码操作:"); // 输出: 837943
             } else {
                 const fullEmail = mailboxPrefix + '@zaunist.com';
-                console.log("执行其他操作:", input);
+                console.log("执行其他操作:");
             }
             
             navigator.clipboard.writeText(fullEmail).then(() => {
