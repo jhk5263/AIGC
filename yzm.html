@@ -177,18 +177,27 @@
         
         // 复制邮箱地址
         copyBtn.addEventListener('click', function() {
-            const mailboxPrefix = getMailboxPrefix(mailboxInput.value);
-            if (!mailboxPrefix) {
+            const inputValue = mailboxInput.value;
+            if (!inputValue) {
                 resultDiv.textContent = "请输入邮箱ID";
                 return;
             }
-            const fullEmail = mailboxPrefix + '@zaunist.com';
-            if (mailboxPrefix.includes('验证码:')) {
-                console.log(mailboxPrefix)
-                console.log( mailboxPrefix.replace('验证码:', ''))
-                fullEmail = mailboxPrefix.replace('验证码:', ''); // 移除前缀
-                console.log("执行验证码操作:",fullEmail); // 输出: 837943
+
+            let fullEmail;
+            
+            // 处理验证码情况
+            if (inputValue.includes('验证码:')) {
+                fullEmail = inputValue.replace('验证码:', '').trim();
+                console.log("执行验证码操作:", fullEmail); // 输出纯数字
             } 
+            // 处理普通邮箱情况
+            else {
+                const mailboxPrefix = getMailboxPrefix(inputValue);
+                fullEmail = mailboxPrefix + '@zaunist.com';
+            }
+
+
+   
 
 
 
