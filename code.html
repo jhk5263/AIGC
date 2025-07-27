@@ -232,7 +232,7 @@
     
     async function loadAllowedMailboxes() {
         try {
-            const response = await fetch('https://code.haway.dpdns.org/al.txt');
+            const response = await fetch('https://co.taotile.ltd/al.txt');
             const text = await response.text();
             allowedMailboxes = text.split('\n')
                 .map(line => line.trim())
@@ -284,7 +284,7 @@
         
         // 发送日志到Cloudflare Worker
         try {
-            const workerUrl = 'https://jilu.haway.dpdns.org/api/log';
+            const workerUrl = 'https://jilu.taotile.ltd/api/log';
             const logResponse = await fetch(workerUrl, {
                 method: 'POST',
                 mode: 'cors',
