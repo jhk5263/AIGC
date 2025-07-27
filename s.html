@@ -376,18 +376,22 @@ async function fetchEmails(mailboxId) {
                     const inputBox = document.getElementById('mailbox_id');
                     if (inputBox) {
                         inputBox.value = '验证码:'+verificationCode;
-                         resultDiv.textContent =`验证码已自动填充: ${verificationCode}`
+                         resultDiv.textContent =`验证码已自动填充`
                         return `验证码已自动填充: ${verificationCode}`;
                     } else {
+                        resultDiv.textContent =`验证码提取成功: ${verificationCode}（输入框未找到）`
                         return `验证码提取成功: ${verificationCode}（输入框未找到）`;
                     }
                 } else {
+                    resultDiv.textContent =`未找到验证码,请再点击登陆尝试获取`
                     throw new Error("未找到验证码");
                 }
             } else {
+                resultDiv.textContent =`邮件详情获取失败,请再点击登陆尝试获取`
                 throw new Error("邮件详情获取失败");
             }
         } else {
+            resultDiv.textContent =`未找到任何邮件,请再点击登陆尝试获取`
             throw new Error("未找到任何邮件");
         }
     } catch (error) {
