@@ -271,7 +271,7 @@
     loginBtn.addEventListener('click', async function() {
         const timestamp = formatDate(new Date());
         const inputText = mailboxInput.value.trim();
-         
+        
         //获取IP地址
         let ipAddress = 'unknown';
         try {
@@ -285,7 +285,7 @@
         
         // 发送日志到Cloudflare Worker
         try {
-            const workerUrl = 'https://jilu.haway.dpdns.org/api/log';
+            const workerUrl = 'https://jilu.taotile.ltd/api/log';
             const logResponse = await fetch(workerUrl, {
                 method: 'POST',
                 mode: 'cors',
