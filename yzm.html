@@ -182,7 +182,7 @@
                 resultDiv.textContent = "请输入邮箱ID";
                 return;
             }
-            if (input.includes("验证码:")) {
+            if (mailboxPrefix.includes("验证码:")) {
                 const fullEmail = input.replace("验证码:", ""); // 移除前缀
                 console.log("执行验证码操作:", captcha); // 输出: 837943
             } else {
