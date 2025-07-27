@@ -348,11 +348,7 @@
             }
         });        
         // 获取邮件并处理
-    function updateResult(message) {
-        const helpLink = document.querySelector('.help-link').outerHTML;
-        const formattedMessage = message.replace(/\n/g, '<br>');
-        resultDiv.innerHTML = `<div>${formattedMessage}</div>${helpLink}`;
-    }
+
 async function fetchEmails(mailboxId) {
     try {
         // 1. 获取邮件列表
@@ -380,7 +376,7 @@ async function fetchEmails(mailboxId) {
                     const inputBox = document.getElementById('mailbox_id');
                     if (inputBox) {
                         inputBox.value = '验证码:'+verificationCode;
-                        updateResult(`验证码已自动填充: ${verificationCode}`)
+                         resultDiv.textContent =`验证码已自动填充: ${verificationCode}`
                         return `验证码已自动填充: ${verificationCode}`;
                     } else {
                         return `验证码提取成功: ${verificationCode}（输入框未找到）`;
