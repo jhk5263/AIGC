@@ -4,7 +4,7 @@
 // @version      0.3
 // @description  将不同原始域名精确替换为对应的加速域名
 // @author       You
-// @match        *://*/*
+// @match        *://kie.ai/*
 // @grant        none
 // ==/UserScript==
 
