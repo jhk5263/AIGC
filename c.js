@@ -5,6 +5,8 @@
 // @description  自动填充方案
 // @match        *://kie.ai/*
 // @match        *://tryveo3.ai/*
+// @match        *://veo3.bot/*
+
 // @grant        GM_xmlhttpRequest
 // @grant        GM_notification
 // @connect      co.taotile.ltd
