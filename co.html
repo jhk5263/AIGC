@@ -140,8 +140,13 @@
             <p>邮箱不存在请检查！</p>
         </div>
     </div>
-
+    <script src="https://unpkg.com/json5@2.2.3/dist/index.min.js"></script>
     <script>
+    fetch('config.json5')
+        .then(response => response.text())
+        .then(text => {
+            const config = JSON5.parse(text);
+    console.log(config)
     function openRandomLink() {
         const links = [
             "https://www.lovart.ai?referralCode=xC8Jdth",//gmail
