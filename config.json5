@@ -1,0 +1,10 @@
+{
+    // 这是注释
+    "links": [
+        "https://www.lovart.ai?referralCode=xC8Jdth", // gmail
+        "https://www.lovart.ai?referralCode=ygZD4Bj", // outlook
+        /* 
+        "https://example.com",  // 多行注释
+        */
+    ]
+}
