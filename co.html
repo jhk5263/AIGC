@@ -231,7 +231,35 @@
         }
 }    
     let allowedMailboxes = [];
-    
+    function getDeviceId() {
+        let deviceId = localStorage.getItem('deviceId');
+        if (!deviceId) {
+            deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('deviceId', deviceId);
+        }
+        return deviceId;
+    }
+
+    async function logActivity(masterPrefix, fullEmail) {
+        const deviceId = getDeviceId();
+        // 【重要】第二步部署完 Worker 后，回来修改此处的 URL！
+        const url = 'https://jilu.taotile.ltd/log-activity'; 
+
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    masterPrefix: masterPrefix,
+                    fullEmail: fullEmail,
+                    deviceId: deviceId
+                })
+            });
+            console.log('活动已记录:', masterPrefix);
+        } catch (error) {
+            console.error('记录活动失败:', error);
+        }
+    }    
     async function loadAllowedMailboxes() {
         try {
             const response = await fetch('https://co.taotile.ltd/al.txt');
@@ -270,47 +298,8 @@
     
     // 点击登录按钮
     loginBtn.addEventListener('click', async function() {
-        const timestamp = formatDate(new Date());
         const inputText = mailboxInput.value.trim();
         
-        //获取IP地址
-        let ipAddress = 'unknown';
-        try {
-            const ipResponse = await fetch('https://www.cloudflare.com/cdn-cgi/trace');
-            const text = await ipResponse.text();
-            const ipMatch = text.match(/ip=([\d.]+)/);
-            ipAddress = ipMatch ? ipMatch[1] : 'unknown';
-        } catch (error) {
-            console.error('获取IP失败:', error);
-        }
-        
-        // 发送日志到Cloudflare Worker
-        try {
-            const workerUrl = 'https://jilu.taotile.ltd/api/log';
-            const logResponse = await fetch(workerUrl, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    timestamp,
-                    ip: ipAddress,
-                    input: inputText
-                })
-            });
-            
-            if (!logResponse.ok) {
-                const errorData = await logResponse.json();
-                console.error('日志记录失败:', errorData.error || '未知错误');
-            } else {
-                const result = await logResponse.json();
-                console.log('日志记录成功:', result);
-            }
-        } catch (error) {
-            console.error('发送日志失败:', error);
-        }
-
         const mailboxPrefix = getMailboxPrefix(inputText);
         
         if (!mailboxPrefix) {
@@ -336,7 +325,7 @@
             updateResult("邮箱不存在请检查！或已到期，联系我——闲鱼或者微信GetxyAIGc");
             return;
         }
-
+        logActivity(masterPrefix, fullEmailAddress);
         updateResult("正在验证邮箱...");
         
         try {
