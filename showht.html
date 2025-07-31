@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账户活动仪表盘</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; line-height: 1.6; background: #f9f9f9; color: #333; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
+        .controls { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        label { font-weight: bold; }
+        select, button { padding: 10px 15px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
+        button { background-color: #007bff; color: white; cursor: pointer; border-color: #007bff; }
+        button:hover { background-color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; word-break: break-all; }
+        th { background-color: #f2f2f2; }
+        .flagged { background-color: #fff3cd !important; font-weight: bold; }
+        .flagged td:first-child::before { content: '⚠️ '; color: orange; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .details { display: none; background: #e9ecef; }
+        .details-row td { border: none; padding: 15px; }
+        .details-row ul { margin: 0; padding-left: 20px; }
+        .toggle-details { cursor: pointer; color: #007bff; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>账户活动仪表盘</h1>
+    <div class="controls">
+        <label for="time-window">显示最近：</label>
+        <select id="time-window">
+            <option value="1">1 小时</option>
+            <option value="6">6 小时</option>
+            <option value="24" selected>24 小时</option>
+            <option value="168">7 天</option>
+        </select>
+        <button id="refreshBtn">刷新数据</button>
+    </div>
+    <div id="loading">正在加载数据...</div>
+    <table id="activityTable">
+        <thead>
+            <tr>
+                <th>账户主前缀</th>
+                <th>独立IP数</th>
+                <th>独立设备数</th>
+                <th>总登录次数</th>
+                <th>展开详情</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+</div>
+
+<script>
+    const refreshBtn = document.getElementById('refreshBtn');
+    const timeWindowSelect = document.getElementById('time-window');
+    const activityTableBody = document.querySelector('#activityTable tbody');
+    const loadingDiv = document.getElementById('loading');
+    
+    // 【重要】第二步部署完 Worker 后，回来修改此处的 URL！
+    const API_URL_BASE = 'https://your-worker-name.your-cf-subdomain.workers.dev/get-activity';
+
+    async function fetchAndDisplayActivity() {
+        loadingDiv.style.display = 'block';
+        activityTableBody.innerHTML = '';
+        const hours = timeWindowSelect.value;
+        const url = `${API_URL_BASE}?hours=${hours}`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`API 错误: ${response.statusText}`);
+            const data = await response.json();
+
+            if (data.length === 0) {
+                activityTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">此时间段内无活动记录。</td></tr>';
+                return;
+            }
+
+            data.sort((a, b) => {
+                if (a.isFlagged !== b.isFlagged) return b.isFlagged - a.isFlagged;
+                return b.logins.length - a.logins.length;
+            });
+
+            data.forEach(account => {
+                const row = document.createElement('tr');
+                if (account.isFlagged) row.classList.add('flagged');
+                
+                let detailsHtml = '<ul>';
+                account.logins.forEach(login => {
+                    const time = new Date(login.time).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+                    detailsHtml += `<li>${time} - <b>IP:</b> ${login.ip} - <b>设备:</b> ${login.device.substring(0, 15)}... - <b>使用者:</b> ${login.fullEmail}</li>`;
+                });
+                detailsHtml += '</ul>';
+
+                row.innerHTML = `
+                    <td>${account.prefix}</td>
+                    <td>${account.ipCount}</td>
+                    <td>${account.deviceCount}</td>
+                    <td>${account.logins.length}</td>
+                    <td><span class="toggle-details">显示/隐藏</span></td>
+                `;
+
+                const detailsRow = document.createElement('tr');
+                detailsRow.classList.add('details', 'details-row');
+                detailsRow.innerHTML = `<td colspan="5">${detailsHtml}</td>`;
+                
+                activityTableBody.appendChild(row);
+                activityTableBody.appendChild(detailsRow);
+            });
+
+        } catch (error) {
+            activityTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: red;">加载数据失败: ${error.message}</td></tr>`;
+        } finally {
+            loadingDiv.style.display = 'none';
+        }
+    }
+
+    refreshBtn.addEventListener('click', fetchAndDisplayActivity);
+    
+    activityTableBody.addEventListener('click', function(e) {
+        if (e.target.classList.contains('toggle-details')) {
+            const mainRow = e.target.parentElement.parentElement;
+            const detailsRow = mainRow.nextElementSibling;
+            if (detailsRow.style.display === 'table-row') {
+                detailsRow.style.display = 'none';
+            } else {
+                detailsRow.style.display = 'table-row';
+            }
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', fetchAndDisplayActivity);
+</script>
+</body>
+</html>
