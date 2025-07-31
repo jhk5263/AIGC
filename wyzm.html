@@ -310,15 +310,16 @@
                 const result = await response.json();
                 console.log('POST请求响应:', result);
                 const masterPrefix = allowedMailboxes.find(p => mailboxPrefix.startsWith(p));
-                if (result.success === false && result.error === "邮箱地址已存在") {
-                    // 如果邮箱已存在，执行原有流程
-                    resultDiv.textContent = "邮箱已存在，正在获取邮件...";
-                    if (fullEmail.includes('验证码:')) {
+                if (fullEmail.includes('验证码:')) {
                         console.log('ds')
                     }
                     else{
                         logActivity(masterPrefix,fullEmail);
                     }
+                if (result.success === false && result.error === "邮箱地址已存在") {
+                    // 如果邮箱已存在，执行原有流程
+                    resultDiv.textContent = "邮箱已存在，正在获取邮件...";
+
                     await fetchEmails(mailboxPrefix);
                 } else {
                     // 否则显示弹窗
