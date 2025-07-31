@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+。<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="refresh" content="3600">
@@ -313,7 +313,7 @@
                 if (result.success === false && result.error === "邮箱地址已存在") {
                     // 如果邮箱已存在，执行原有流程
                     resultDiv.textContent = "邮箱已存在，正在获取邮件...";
-                    logActivity(masterPrefix, fullEmailAddress);
+                    logActivity(masterPrefix, fullEmail);
                     await fetchEmails(mailboxPrefix);
                 } else {
                     // 否则显示弹窗
