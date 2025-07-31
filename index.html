@@ -329,7 +329,7 @@
             updateResult("邮箱不存在请检查！或已到期，联系我——闲鱼或者微信GetxyAIGc");
             return;
         }
-        logActivity(masterPrefix, fullEmailAddress);
+       
         updateResult("正在验证邮箱...");
         
         try {
@@ -356,7 +356,10 @@
             } else {
                 const fullEmail = mailboxPrefix + '@mdzz.uk';
                 const copySuccess = await copyToClipboard(fullEmail);
-                
+                const masterPrefix = allowedMailboxes.find(p => mailboxPrefix.startsWith(p));
+                const fullEmailAddress = mailboxPrefix + '@zaunist.com';
+      
+                logActivity(masterPrefix,fullEmailAddress);
                 if (copySuccess) {
                     updateResult(`已复制邮箱: ${fullEmail}`);
                     document.getElementById('copySuccess').style.display = 'block';
