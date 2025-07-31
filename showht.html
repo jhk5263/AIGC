@@ -33,7 +33,7 @@
         <label for="time-window">显示最近：</label>
         <select id="time-window">
             <option value="1">1 小时</option>
-            <option value="6">6 小时</option>
+            <option value="6">3 小时</option>
             <option value="24" selected>24 小时</option>
             <option value="168">7 天</option>
         </select>
@@ -92,7 +92,7 @@
                 let detailsHtml = '<ul>';
                 account.logins.forEach(login => {
                     const time = new Date(login.time).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
-                    detailsHtml += `<li>${time} - <b>IP:</b> ${login.ip} - <b>设备:</b> ${login.device.substring(0, 15)}... - <b>使用者:</b> ${login.fullEmail}</li>`;
+                    detailsHtml += `<li>${time} - <b>IP:</b> ${login.ip} - <b>设备:</b> ${login.device}... - <b>使用者:</b> ${login.fullEmail}</li>`;
                 });
                 detailsHtml += '</ul>';
 
