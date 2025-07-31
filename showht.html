@@ -34,8 +34,8 @@
         <label for="time-window">显示最近：</label>
         <select id="time-window">
             <option value="1">1 小时</option>
-            <option value="6">6 小时</option>
-            <option value="24" selected>24 小时</option>
+            <option value="3" selected>3 小时</option>
+            <option value="24">24 小时</option>
             <option value="168">7 天</option>
         </select>
         <button id="refreshBtn">刷新数据</button>
@@ -62,8 +62,8 @@
     const activityTableBody = document.querySelector('#activityTable tbody');
     const loadingDiv = document.getElementById('loading');
     
-    // 【重要】请确保这里的 URL 是正确的！
-    const API_URL_BASE = 'https://your-worker-name.your-cf-subdomain.workers.dev/get-activity';
+    // 已填入您提供的 Worker 地址
+    const API_URL_BASE = 'https://jilu.taotile.ltd/get-activity';
 
     async function fetchAndDisplayActivity() {
         loadingDiv.style.display = 'block';
@@ -122,13 +122,8 @@
     }
 
     // --- 事件监听区域 ---
-    // 监听“刷新数据”按钮的点击事件
     refreshBtn.addEventListener('click', fetchAndDisplayActivity);
-    
-    // 【新增功能】监听下拉框的“change”事件，实现自动刷新
     timeWindowSelect.addEventListener('change', fetchAndDisplayActivity);
-    
-    // ---
     
     activityTableBody.addEventListener('click', function(e) {
         if (e.target.classList.contains('toggle-details')) {
