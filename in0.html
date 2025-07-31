@@ -66,7 +66,7 @@
     async function logActivity(masterPrefix, fullEmail) {
         const deviceId = getDeviceId();
         // 【重要】第二步部署完 Worker 后，回来修改此处的 URL！
-        const url = 'https://your-worker-name.your-cf-subdomain.workers.dev/log-activity'; 
+        const url = 'https://apii.haway.workers.dev/log-activity'; 
 
         try {
             await fetch(url, {
