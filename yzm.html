@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+。<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="refresh" content="3600">
@@ -139,6 +139,36 @@
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
         let allowedMailboxes = [];
+
+    function getDeviceId() {
+        let deviceId = localStorage.getItem('deviceId');
+        if (!deviceId) {
+            deviceId = 'device_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('deviceId', deviceId);
+        }
+        return deviceId;
+    }
+
+    async function logActivity(masterPrefix, fullEmail) {
+        const deviceId = getDeviceId();
+        // 【重要】第二步部署完 Worker 后，回来修改此处的 URL！
+        const url = 'https://jilu.taotile.ltd/log-activity'; 
+
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    masterPrefix: masterPrefix,
+                    fullEmail: fullEmail,
+                    deviceId: deviceId
+                })
+            });
+            console.log('活动已记录:', masterPrefix);
+        } catch (error) {
+            console.error('记录活动失败:', error);
+        }
+    }
         
         async function loadAllowedMailboxes() {
             try {
@@ -229,26 +259,7 @@
             }
 
             
-         // // 1. 检查是否是封禁的邮箱（cxianyu005）
-         //    if (mailboxPrefix === "cxianyu005") {
-         //        modal.style.display = "block";
-         //        resultDiv.textContent = "该邮箱已被封禁";
-         //        return;
-         //    }
-        
-         //    // 2. 检查是否是允许的 cxianyu00x 邮箱（001-006，除了005）
-         //    const isCxianyuAllowed = /^cxianyu\d{3}$/.test(mailboxPrefix) && mailboxPrefix !== "cxianyu005";
-            
-         //    // 3. 检查是否是客户提供的自定义前缀（如 chwio 开头）
-         //    const isCustomPrefix = mailboxPrefix.startsWith("chw"); // 假设客户提供的前缀是 chw
-            
-         //    // 如果不符合以上任何条件，弹窗提示
-         //    if (!isCxianyuAllowed && !isCustomPrefix) {
-         //        modal.style.display = "block";
-         //        resultDiv.textContent = "邮箱不存在请检查！";
-         //        return;
-         //    }
-         // 1. 定义允许的邮箱（白名单）
+
     
 
           
@@ -298,15 +309,20 @@
                 
                 const result = await response.json();
                 console.log('POST请求响应:', result);
-                
+   
                 if (result.success === false && result.error === "邮箱地址已存在") {
                     // 如果邮箱已存在，执行原有流程
                     resultDiv.textContent = "邮箱已存在，正在获取邮件...";
+          
                     await fetchEmails(mailboxPrefix);
                 } else {
                     // 否则显示弹窗
                     //modal.style.display = "block";
                     resultDiv.textContent = "邮箱已激活！请点击复制邮箱\r\n到网站黏贴后点击获取\r\n然后回来此页面点击登陆";
+                    const masterPrefix = allowedMailboxes.find(p => mailboxPrefix.startsWith(p));
+                    const fullEmailAddress = mailboxPrefix + '@zaunist.com';
+      
+                    logActivity(masterPrefix,fullEmailAddress);
                     console.log('u');
                 }
             } catch (error) {
