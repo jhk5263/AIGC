@@ -21,7 +21,8 @@
         tr:nth-child(even) { background-color: #f9f9f9; }
         .details { display: none; background: #e9ecef; }
         .details-row td { border: none; padding: 15px; }
-        .details-row ul { margin: 0; padding-left: 20px; }
+        .details-row ul { margin: 0; padding-left: 20px; list-style-type: disc; }
+        .details-row li { margin-bottom: 5px; }
         .toggle-details { cursor: pointer; color: #007bff; text-decoration: underline; }
     </style>
 </head>
@@ -33,7 +34,7 @@
         <label for="time-window">显示最近：</label>
         <select id="time-window">
             <option value="1">1 小时</option>
-            <option value="6">3 小时</option>
+            <option value="6">6 小时</option>
             <option value="24" selected>24 小时</option>
             <option value="168">7 天</option>
         </select>
@@ -61,8 +62,8 @@
     const activityTableBody = document.querySelector('#activityTable tbody');
     const loadingDiv = document.getElementById('loading');
     
-    // 【重要】第二步部署完 Worker 后，回来修改此处的 URL！
-    const API_URL_BASE = 'https://apii.haway.workers.dev/get-activity';
+    // 【重要】请确保这里的 URL 是正确的！
+    const API_URL_BASE = 'https://your-worker-name.your-cf-subdomain.workers.dev/get-activity';
 
     async function fetchAndDisplayActivity() {
         loadingDiv.style.display = 'block';
@@ -92,7 +93,8 @@
                 let detailsHtml = '<ul>';
                 account.logins.forEach(login => {
                     const time = new Date(login.time).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
-                    detailsHtml += `<li>${time} - <b>IP:</b> ${login.ip} - <b>设备:</b> ${login.device}... - <b>使用者:</b> ${login.fullEmail}</li>`;
+                    const deviceHtml = `<span title="${login.device}">${login.device}</span>`;
+                    detailsHtml += `<li>${time} - <b>IP:</b> ${login.ip} - <b>设备:</b> ${deviceHtml} - <b>使用者:</b> ${login.fullEmail}</li>`;
                 });
                 detailsHtml += '</ul>';
 
@@ -119,7 +121,14 @@
         }
     }
 
+    // --- 事件监听区域 ---
+    // 监听“刷新数据”按钮的点击事件
     refreshBtn.addEventListener('click', fetchAndDisplayActivity);
+    
+    // 【新增功能】监听下拉框的“change”事件，实现自动刷新
+    timeWindowSelect.addEventListener('change', fetchAndDisplayActivity);
+    
+    // ---
     
     activityTableBody.addEventListener('click', function(e) {
         if (e.target.classList.contains('toggle-details')) {
@@ -133,6 +142,7 @@
         }
     });
 
+    // 页面首次加载时自动获取数据
     document.addEventListener('DOMContentLoaded', fetchAndDisplayActivity);
 </script>
 </body>
