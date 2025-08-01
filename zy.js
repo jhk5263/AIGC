@@ -14,7 +14,8 @@
     // 域名映射配置
     const domainMappings = {
         'file.aiquickdraw.com': 'fsp.taotile.ltd',
-        'tempfile.aiquickdraw.com': 'sp.taotile.ltd'
+        'tempfile.aiquickdraw.com': 'sp.taotile.ltd',
+        'tempfile.1f6c22e0a6980b81e6d5c6c5f89b1984.r2.cloudflarestorage.com': 'tu.taotile.ltd'
     };
 
     // 检查URL是否需要替换
