@@ -3,13 +3,15 @@
 // @namespace    http://tampermonkey.net/
 // @version      1.5
 // @description  自动填充方案
+// @author       你的名字 (可以替换成你自己的名字)
 // @match        *://kie.ai/*
 // @match        *://tryveo3.ai/*
 // @match        *://veo3.bot/*
-
 // @grant        GM_xmlhttpRequest
 // @grant        GM_notification
 // @connect      co.taotile.ltd
+// @updateURL    https://co.taotile.ltd/c.js
+// @downloadURL  https://co.taotile.ltd/c.js
 // ==/UserScript==
 
 (function() {
