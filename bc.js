@@ -10,8 +10,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_notification
 // @connect      co.taotile.ltd
-// @updateURL    https://co.taotile.ltd/c.js
-// @downloadURL  https://co.taotile.ltd/c.js
+
 // ==/UserScript==
 
 (function() {
