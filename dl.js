@@ -8,6 +8,8 @@
 // @icon         https://www.topmediai.com/favicon.ico
 // @grant        none
 // @license      MIT
+// @updateURL    https://co.taotile.ltd/dl.js
+// @downloadURL  https://co.taotile.ltd/dl.js
 // ==/UserScript==
 
 (function() {
