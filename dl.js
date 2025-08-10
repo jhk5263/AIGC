@@ -4,7 +4,7 @@
 // @version      1.0
 // @description  在 TopMediAI 的文本转视频页面，当视频生成后自动添加一个下载按钮。
 // @author       Gemini
-// @match        https://www.topmediai.com/app/text-to-video
+// @match        *://www.topmediai.com/*
 // @icon         https://www.topmediai.com/favicon.ico
 // @grant        none
 // @license      MIT
