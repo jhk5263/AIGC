@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TopMediAI 视频下载器
 // @namespace    http://tampermonkey.net/
-// @version      1.2
+// @version      1.21
 // @description  在 TopMediAI 的文本转视频页面，当视频生成后自动添加一个下载按钮。
 // @author       Gemini
 // @match        *://www.topmediai.com/*
