@@ -142,35 +142,42 @@
 
     <script>
 
-    // ✨ **MODIFIED FUNCTION** ✨
-    // This function now reads links from 'dizhi.txt'
+    /**
+     * 【已修正的函数】
+     * 从 dizhi.txt 读取链接，正确解析后，随机打开一个。
+     */
     async function openRandomLink() {
         try {
-            // 1. Fetch the content from dizhi.txt
             const response = await fetch('dizhi.txt');
             if (!response.ok) {
                 throw new Error('无法加载 dizhi.txt 文件，请确保它和网页在同一个目录下。');
             }
             const text = await response.text();
 
-            // 2. Parse the text to create a clean array of links
-            const links = text.split('\n') // Split by new line
-                .map(line => line.split('//')[0].trim()) // Remove comments and trim whitespace
-                .filter(link => link.startsWith('https://')); // Keep only valid https links
+            // 关键的解析逻辑
+            const links = text.split('\n')
+                .map(line => {
+                    // 1. 用 '//' 分割
+                    // 2. 取前半部分
+                    // 3. 去掉前后的空格
+                    return line.split('//')[0].trim(); 
+                })
+                .filter(link => {
+                    // 4. 只保留以 'https://' 开头的有效链接
+                    return link.startsWith('https://');
+                });
 
-            // 3. Check if any links were found
             if (links.length === 0) {
+                // 如果经过筛选后，数组是空的，就弹出这个提示
                 alert('在 dizhi.txt 中没有找到有效的链接。');
-                return; // Stop if no links
+                return;
             }
-
-            // 4. Randomly select a link from the array
+            
+            // 从有效链接数组中随机选择一个
             const randomIndex = Math.floor(Math.random() * links.length);
             const selectedLink = links[randomIndex];
             
-            console.log(`从 dizhi.txt 随机打开链接: ${selectedLink}`);
-
-            // 5. Open the link using an <a> tag to avoid pop-up blockers
+            // 使用 `<a>` 标签方式打开（避免被拦截）
             const a = document.createElement('a');
             a.href = selectedLink;
             a.target = '_blank';
@@ -206,7 +213,7 @@
             try {
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
-                textarea.style.position = 'fixed';
+                textarea.style.position = 'fixed';  // 防止滚动
                 document.body.appendChild(textarea);
                 textarea.select();
                 
@@ -260,7 +267,7 @@
             console.log('Allowed mailboxes loaded:', allowedMailboxes);
         } catch (error) {
             console.error('Failed to load allowed mailboxes:', error);
-            allowedMailboxes = [];              
+            allowedMailboxes = [];             
         }
     }
     
@@ -297,7 +304,6 @@
             return;
         }
 
-        // 检查是否在白名单内
         const isAllowed = allowedMailboxes.some(prefix => {
             if (prefix.startsWith("chh")) {
                 return mailboxPrefix === prefix;
@@ -357,7 +363,7 @@
                     updateResult(`请手动复制邮箱: ${fullEmail}`);
                 }
                 
-                // Call the modified async function
+                // 调用修正后的随机链接函数
                 await openRandomLink();
             }
         } catch (error) {
@@ -381,7 +387,6 @@
     });         
     
     // 获取邮件并处理
-
     async function fetchEmails(mailboxId) {
         try {
             const emailsUrl = `https://mail.taotile.ltd/api/mailboxes/${mailboxId}/emails`;
@@ -403,7 +408,6 @@
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(htmlContent, "text/html");
                         
-                        // ✨ **OPTIMIZED SELECTOR: Find the link that contains '/c/' in its href**
                         const linkElement = doc.querySelector('a[href*="/c/"]');
                         
                         if (linkElement) {
@@ -436,8 +440,6 @@
             updateResult(`发生错误: ${error.message}`);
         }
     }
-
-        
     </script>
 </body>
 </html>
