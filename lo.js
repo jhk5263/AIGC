@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Lovart登录系统
 // @namespace    http://tampermonkey.net/
-// @version      1.24
+// @version      1.25
 // @description
 // @author       haway
 // @match        *://*.lovart.ai/*
