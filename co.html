@@ -382,52 +382,63 @@
     });        
     
     // 获取邮件并处理
-    async function fetchEmails(mailboxId) {
-        try {
-            const emailsUrl = `https://mail.taotile.ltd/api/mailboxes/${mailboxId}/emails`;
-            const emailsResponse = await fetch(emailsUrl);
-            const responseData = await emailsResponse.json();
-            
-            if (responseData.success && Array.isArray(responseData.emails)) {
-                if (responseData.emails.length > 0) {
-                    const latestEmailId = responseData.emails[0].id;
-                    updateResult("正在获取邮件内容...");
-                    
-                    const emailUrl = `https://mail.taotile.ltd/api/emails/${latestEmailId}`;
-                    const emailResponse = await fetch(emailUrl);
-                    const emailData = await emailResponse.json();
-                    console.log('邮件详情响应:', emailData);
-                    
-                    if (emailData.success) {
-                        const htmlContent = emailData.email.htmlContent;
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(htmlContent, "text/html");
-                        const link = doc.querySelector('a').href;
-                        console.log('解析到的链接:', link);
-                        
-                        const a = document.createElement('a');
-                        a.href = link;
-                        a.target = '_blank';
-                        a.rel = 'noopener noreferrer'; // 安全措施
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        updateResult(`成功打开链接: ${link}`);
-                    } else {
-                        updateResult("获取邮件详情失败");
-                    }
-                } else {
-                   const fullEmail = mailboxId + '@mdzz.uk'; // 确保变量已赋值
-                    updateResult(`没有找到邮件\n\n手动复制重试\n邮箱：${fullEmail}\n网址：https://www.lovart.ai?referralCode=358bzLA`);
-                }
-            } else {
-                updateResult("服务器返回了无效的邮件列表");
-            }
-        } catch (error) {
-            console.error('获取邮件过程中出错:', error);
-            updateResult(`发生错误: ${error.message}`);
-        }
-    }
+
+    async function fetchEmails(mailboxId) {
+        try {
+            const emailsUrl = `https://mail.taotile.ltd/api/mailboxes/${mailboxId}/emails`;
+            const emailsResponse = await fetch(emailsUrl);
+            const responseData = await emailsResponse.json();
+            
+            if (responseData.success && Array.isArray(responseData.emails)) {
+                if (responseData.emails.length > 0) {
+                    const latestEmailId = responseData.emails[0].id;
+                    updateResult("正在获取邮件内容...");
+                    
+                    const emailUrl = `https://mail.taotile.ltd/api/emails/${latestEmailId}`;
+                    const emailResponse = await fetch(emailUrl);
+                    const emailData = await emailResponse.json();
+                    console.log('邮件详情响应:', emailData);
+                    
+                    if (emailData.success) {
+                        const htmlContent = emailData.email.htmlContent;
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(htmlContent, "text/html");
+                        
+                        // ✨ **OPTIMIZED SELECTOR: Find the link that contains '/c/' in its href**
+                        **const linkElement = doc.querySelector('a[href*="/c/"]');**
+                        
+                        if (linkElement) {
+                            const link = linkElement.href;
+                            console.log('解析到的目标链接:', link);
+                            
+                            const a = document.createElement('a');
+                            a.href = link;
+                            a.target = '_blank';
+                            a.rel = 'noopener noreferrer';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            updateResult(`成功打开链接: ${link}`);
+                        } else {
+                            updateResult("在邮件中未找到有效的登录链接。");
+                        }
+                    } else {
+                        updateResult("获取邮件详情失败");
+                    }
+                } else {
+                   const fullEmail = mailboxId + '@mdzz.uk';
+                    updateResult(`没有找到邮件\n\n手动复制重试\n邮箱：${fullEmail}\n网址：https://www.lovart.ai?referralCode=358bzLA`);
+                }
+            } else {
+                updateResult("服务器返回了无效的邮件列表");
+            }
+        } catch (error) {
+            console.error('获取邮件过程中出错:', error);
+            updateResult(`发生错误: ${error.message}`);
+        }
+    }
+
+        
     </script>
 </body>
 </html>
