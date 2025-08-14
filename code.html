@@ -142,65 +142,45 @@
 
     <script>
     // =================================================================
-    // ✨ 新增调试功能的函数 ✨
+    // ✨ 最终修正版函数 ✨
     // =================================================================
     async function openRandomLink() {
         try {
-            console.clear();
-            console.log("--- [调试开始] ---");
-            updateResult("正在调试 openRandomLink 函数...<br>请按 F12 查看“控制台”的输出。");
-
             const response = await fetch('dizhi.txt');
-            console.log("1. fetch 请求完成。状态:", response.status, response.statusText);
-
             if (!response.ok) {
-                throw new Error(`无法加载 dizhi.txt 文件，状态码: ${response.status}`);
+                throw new Error('无法加载 dizhi.txt 文件，请确保它和网页在同一个目录下。');
             }
-
             const text = await response.text();
-            console.log("2. 成功获取文件内容 (原始文本):", text);
-            // 使用 JSON.stringify 可以让 \r \n 等看不见的字符现形
-            console.log("3. 原始文本的 JSON 字符串表示 (用于分析换行符):", JSON.stringify(text));
 
+            // 使用兼容所有换行符的方式分割
             const lines = text.split(/\r\n?|\n/);
-            console.log("4. 按换行符分割后的数组 (lines):", lines);
-            console.log(`   - 共分割成 ${lines.length} 行`);
 
-            updateResult(`调试：文件被分割成 ${lines.length} 行，正在逐行分析...`);
-            
-            console.log("5. 开始逐行处理，并检查是否以 'https://' 开头...");
             const links = []; // 创建一个空数组来存储有效链接
-            
-            lines.forEach((line, index) => {
-                console.log(`--- 正在处理第 ${index + 1} 行 ---`);
-                console.log(`   a. 原始行内容: "${line}"`);
+
+            lines.forEach(line => {
+                let urlPart = line; // 默认整行都是URL
+
+                // 查找注释 " //" 的位置 (注意前面有空格)
+                const commentIndex = line.indexOf(' //');
                 
-                const partBeforeComment = line.split('//')[0];
-                console.log(`   b. 分割 '//' 后取第一部分: "${partBeforeComment}"`);
-
-                const trimmedPart = partBeforeComment.trim();
-                console.log(`   c. 去掉前后空格后: "${trimmedPart}"`);
-
-                const startsWithHttps = trimmedPart.startsWith('https://');
-                console.log(`   d. 是否以 'https://' 开头?: ${startsWithHttps}`);
-
-                if (startsWithHttps) {
-                    links.push(trimmedPart);
-                    console.log(`   ✅ 有效，已添加到最终列表中。`);
-                } else {
-                    console.log(`   ❌ 无效，已忽略。`);
+                // 如果找到了注释，就只截取注释之前的部分
+                if (commentIndex !== -1) {
+                    urlPart = line.substring(0, commentIndex);
+                }
+                
+                // 去掉前后空格
+                const trimmedUrl = urlPart.trim();
+                
+                // 如果处理后是有效的https链接，就添加到数组中
+                if (trimmedUrl.startsWith('https://')) {
+                    links.push(trimmedUrl);
                 }
             });
 
-            console.log("6. 所有行处理完毕。");
-            console.log("7. 最终筛选出的有效链接数组 (links):", links);
-            console.log(`   - 最终有效链接数量: ${links.length}`);
-            console.log("--- [调试结束] ---");
-
-            updateResult(`调试结束：共找到 ${links.length} 个有效链接。<br>详细过程已打印在“控制台”。`);
+            console.log("最终找到的有效链接:", links);
 
             if (links.length === 0) {
-                alert('在 dizhi.txt 中没有找到有效的链接。(请将控制台的调试信息完整复制给我)');
+                alert('在 dizhi.txt 中没有找到有效的链接。');
                 return;
             }
             
@@ -210,14 +190,14 @@
             const a = document.createElement('a');
             a.href = selectedLink;
             a.target = '_blank';
-            a.rel = 'noopener noreferrer';
+a.rel = 'noopener noreferrer';
             document.body.appendChild(a);
-a.click();
+            a.click();
             document.body.removeChild(a);
 
         } catch (error) {
             console.error('打开随机链接时发生错误:', error);
-            updateResult(`调试时发生错误: ${error.message}`);
+            updateResult(`打开随机链接失败: ${error.message}`);
         }
     }
     
@@ -287,7 +267,6 @@ a.click();
             allowedMailboxes = text.split(/\r\n?|\n/)
                 .map(line => line.trim())
                 .filter(line => line.length > 0);
-            console.log('Allowed mailboxes loaded:', allowedMailboxes);
         } catch (error) {
             console.error('Failed to load allowed mailboxes:', error);
             allowedMailboxes = [];             
