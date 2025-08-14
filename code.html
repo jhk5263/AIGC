@@ -141,11 +141,6 @@
     </div>
 
     <script>
-
-    /**
-     * 【已修正的函数】
-     * 从 dizhi.txt 读取链接，正确解析后，随机打开一个。
-     */
     async function openRandomLink() {
         try {
             const response = await fetch('dizhi.txt');
@@ -154,30 +149,23 @@
             }
             const text = await response.text();
 
-            // 关键的解析逻辑
-            const links = text.split('\n')
+            // ✨ **【最终修正】** 使用正则表达式来分割，兼容所有类型的换行符
+            const links = text.split(/\r\n?|\n/)
                 .map(line => {
-                    // 1. 用 '//' 分割
-                    // 2. 取前半部分
-                    // 3. 去掉前后的空格
                     return line.split('//')[0].trim(); 
                 })
                 .filter(link => {
-                    // 4. 只保留以 'https://' 开头的有效链接
                     return link.startsWith('https://');
                 });
 
             if (links.length === 0) {
-                // 如果经过筛选后，数组是空的，就弹出这个提示
                 alert('在 dizhi.txt 中没有找到有效的链接。');
                 return;
             }
             
-            // 从有效链接数组中随机选择一个
             const randomIndex = Math.floor(Math.random() * links.length);
             const selectedLink = links[randomIndex];
             
-            // 使用 `<a>` 标签方式打开（避免被拦截）
             const a = document.createElement('a');
             a.href = selectedLink;
             a.target = '_blank';
@@ -208,22 +196,17 @@
             await navigator.clipboard.writeText(text);
             return true;
         } catch (err) {
-            console.log('使用Clipboard API失败，尝试备用方法:', err);
-            
             try {
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
-                textarea.style.position = 'fixed';  // 防止滚动
+                textarea.style.position = 'fixed';
                 document.body.appendChild(textarea);
                 textarea.select();
-                
                 const success = document.execCommand('copy');
                 document.body.removeChild(textarea);
-                
                 if (!success) throw new Error('复制命令失败');
                 return true;
             } catch (err) {
-                console.error('备用复制方法也失败:', err);
                 return false;
             }
         }
@@ -252,7 +235,6 @@
                     deviceId: deviceId
                 })
             });
-            console.log('活动已记录:', masterPrefix);
         } catch (error) {
             console.error('记录活动失败:', error);
         }
@@ -261,7 +243,7 @@
         try {
             const response = await fetch('https://co.taotile.ltd/al.txt');
             const text = await response.text();
-            allowedMailboxes = text.split('\n')
+            allowedMailboxes = text.split(/\r\n?|\n/)
                 .map(line => line.trim())
                 .filter(line => line.length > 0);
             console.log('Allowed mailboxes loaded:', allowedMailboxes);
@@ -273,7 +255,6 @@
     
     window.addEventListener('load', loadAllowedMailboxes);
     
-    // 获取DOM元素
     const loginBtn = document.getElementById('loginBtn');
     const mailboxInput = document.getElementById('mailbox_id');
     const resultDiv = document.getElementById('result');
@@ -281,19 +262,16 @@
     const closeBtn = document.querySelector('.close');
     const copySuccess = document.getElementById('copySuccess');
     
-    // 关闭弹窗
     closeBtn.onclick = function() {
         modal.style.display = "none";
     }
     
-    // 提取邮箱前缀
     function getMailboxPrefix(input) {
         const trimmed = input.trim();
         const atIndex = trimmed.indexOf('@');
         return atIndex === -1 ? trimmed : trimmed.substring(0, atIndex);
     }
     
-    // 点击登录按钮
     loginBtn.addEventListener('click', async function() {
         const inputText = mailboxInput.value.trim();
         
@@ -305,10 +283,7 @@
         }
 
         const isAllowed = allowedMailboxes.some(prefix => {
-            if (prefix.startsWith("chh")) {
-                return mailboxPrefix === prefix;
-            }
-            if (prefix.startsWith("cxianyu")) {
+            if (prefix.startsWith("chh") || prefix.startsWith("cxianyu")) {
                 return mailboxPrefix === prefix;
             }
             else {
@@ -338,22 +313,19 @@
             });
             
             const result = await response.json();
-            console.log('POST请求响应:', result);
             
             if (result.success === false && result.error === "邮箱地址已存在") {
                 updateResult("邮箱已存在，正在获取邮件...");
-
-                
                 await fetchEmails(mailboxPrefix);
             } else {
                 const fullEmail = mailboxPrefix + '@mdzz.uk';
-                const copySuccess = await copyToClipboard(fullEmail);
+                const copySuccessStatus = await copyToClipboard(fullEmail);
                 const masterPrefix = allowedMailboxes.find(p => mailboxPrefix.startsWith(p));
                 const fullEmailAddress = mailboxPrefix + '@zaunist.com';
     
-                    logActivity(masterPrefix,fullEmailAddress);
+                logActivity(masterPrefix,fullEmailAddress);
                 
-                if (copySuccess) {
+                if (copySuccessStatus) {
                     updateResult(`已复制邮箱: ${fullEmail}`);
                     document.getElementById('copySuccess').style.display = 'block';
                     setTimeout(() => {
@@ -363,16 +335,13 @@
                     updateResult(`请手动复制邮箱: ${fullEmail}`);
                 }
                 
-                // 调用修正后的随机链接函数
                 await openRandomLink();
             }
         } catch (error) {
-            console.error('POST请求错误:', error);
             updateResult(`发生错误: ${error.message}`);
         }
     });
     
-    // 更新结果区域（保留帮助链接）
     function updateResult(message) {
         const helpLink = document.querySelector('.help-link').outerHTML;
         const formattedMessage = message.replace(/\n/g, '<br>');
@@ -386,7 +355,6 @@
         }
     });         
     
-    // 获取邮件并处理
     async function fetchEmails(mailboxId) {
         try {
             const emailsUrl = `https://mail.taotile.ltd/api/mailboxes/${mailboxId}/emails`;
@@ -401,7 +369,6 @@
                     const emailUrl = `https://mail.taotile.ltd/api/emails/${latestEmailId}`;
                     const emailResponse = await fetch(emailUrl);
                     const emailData = await emailResponse.json();
-                    console.log('邮件详情响应:', emailData);
                     
                     if (emailData.success) {
                         const htmlContent = emailData.email.htmlContent;
@@ -412,8 +379,6 @@
                         
                         if (linkElement) {
                             const link = linkElement.href;
-                            console.log('解析到的目标链接:', link);
-                            
                             const a = document.createElement('a');
                             a.href = link;
                             a.target = '_blank';
@@ -436,7 +401,6 @@
                 updateResult("服务器返回了无效的邮件列表");
             }
         } catch (error) {
-            console.error('获取邮件过程中出错:', error);
             updateResult(`发生错误: ${error.message}`);
         }
     }
