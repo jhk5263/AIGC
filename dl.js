@@ -1,97 +1,14 @@
 // ==UserScript==
 // @name         TopMediAI 视频下载器
 // @namespace    http://tampermonkey.net/
-// @version      1.23
+// @version      1.24
 // @description  在 TopMediAI 的文本转视频页面，当视频生成后自动添加一个下载按钮。
-// @author       Gemini
-// @match        *://www.topmediai.com/*
+// @author       haway
+// @match        *.topmediai.com/*
 // @icon         https://www.topmediai.com/favicon.ico
 // @grant        none
 // @license      MIT
 // @updateURL    https://co.taotile.ltd/dl.js
 // @downloadURL  https://co.taotile.ltd/dl.js
 // ==/UserScript==
-(function() {
-    'use strict';
-
-    // --- 功能1: 处理主页面的下载按钮 ---
-    function handleMainPageButton() {
-        const SCRIPT_ID = 'tampermonkey-download-button';
-        const regenerateBtn = document.querySelector('p.regenerate-btn');
-        const videoSource = document.querySelector('div.video-center video > source');
-
-        if (!regenerateBtn || !videoSource || !videoSource.src) {
-            return;
-        }
-
-        let downloadBtn = document.getElementById(SCRIPT_ID);
-
-        if (!downloadBtn) {
-            downloadBtn = document.createElement('a');
-            downloadBtn.id = SCRIPT_ID;
-            downloadBtn.className = regenerateBtn.className; // 保持风格一致
-            downloadBtn.style.marginLeft = '10px';
-            downloadBtn.innerHTML = `<span class="t-text-[12px] t-text-[#1C1D1F]">下载视频</span>`;
-            regenerateBtn.insertAdjacentElement('afterend', downloadBtn);
-            console.log('主页面下载按钮已创建。');
-        }
-
-        downloadBtn.href = videoSource.src;
-        downloadBtn.setAttribute('download', 'topmediai-video.mp4');
-    }
-
-    // --- 功能2: (新增) 修正弹出窗口的下载按钮 ---
-    function handlePopupButton() {
-        // 查找弹出窗口的容器
-        const popupBody = document.querySelector('.el-dialog__body');
-        if (!popupBody) {
-            return; // 弹窗未打开
-        }
-
-        // 在弹窗内查找视频和下载按钮
-        const buttonInPopup = popupBody.querySelector('button.download-btn');
-        const videoInPopup = popupBody.querySelector('video');
-
-        // 如果没有找到按钮或视频，或者按钮已经被我们替换过了 (变成了<a>标签)，则退出
-        if (!buttonInPopup || !videoInPopup || !videoInPopup.src || buttonInPopup.tagName !== 'BUTTON') {
-            return;
-        }
-
-        console.log('检测到弹窗下载按钮，开始修正...');
-
-        // 创建一个新的<a>标签作为下载链接
-        const newDownloadLink = document.createElement('a');
-
-        // 1. 复制所有样式，让新链接看起来和旧按钮一模一样
-        newDownloadLink.className = buttonInPopup.className;
-        
-        // 2. 复制按钮内部内容 (包括图标和文字)
-        newDownloadLink.innerHTML = buttonInPopup.innerHTML;
-        
-        // 3. 设置链接地址和下载属性
-        newDownloadLink.href = videoInPopup.src;
-        newDownloadLink.setAttribute('download', 'topmediai-popup-video.mp4');
-
-        // 4. 用新的<a>链接替换掉旧的<button>按钮
-        buttonInPopup.parentNode.replaceChild(newDownloadLink, buttonInPopup);
-        
-        console.log('弹窗下载按钮已修正为直接下载链接。');
-    }
-
-    // --- 核心逻辑 ---
-    // 使用 MutationObserver 监视整个页面的变化
-    const observer = new MutationObserver(() => {
-        handleMainPageButton(); // 检查主页面按钮
-        handlePopupButton();    // 同时检查弹窗按钮
-    });
-
-    // 启动观察器
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-
-    console.log('TopMediAI 下载脚本 v1.2 已启动。');
-})();
-    console.log('TopMediAI 下载脚本 v1.9 (保留原始文件名版) 已启动。');
-})();
+function _0x3c0b(_0x5cfb04,_0x46883b){const _0x472456=_0x4724();return _0x3c0b=function(_0x3c0b9a,_0x51d456){_0x3c0b9a=_0x3c0b9a-0x142;let _0x5121a1=_0x472456[_0x3c0b9a];return _0x5121a1;},_0x3c0b(_0x5cfb04,_0x46883b);}function _0x4724(){const _0x1f5d7d=['pathname','button.download-btn','click','display','blob','classList','addEventListener','43070355mXcdeY','href','4657504DNgjox','innerHTML','\x0a\x20\x20\x20\x20\x20\x20\x20\x20button.download-btn.is-downloading,\x20a.download-btn.is-downloading\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20pointer-events:\x20none;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20opacity:\x200.8;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20','[Tampermonkey]\x20无法找到有效的视频源链接。','createObjectURL','style','tagName','7287518WZCpZc','appendChild','[Tampermonkey]\x20','log','topmediai-video.mp4','remove','removeChild','Main\x20Page','then','dataset','source','true','body','revokeObjectURL','5IzoLPh','error','src','2571592nnRrYd','substring','preventDefault','download','1468716ugyopM','):\x20','downloadHandlerAttached','catch','querySelector','3WgVbJG','[Tampermonkey]\x20开始强制下载\x20(','observe','675166lYuTeB','1275150KLivlx','is-downloading','.el-dialog__body','finally','下载失败:','video[controls]','createElement','TopMediAI\x20下载脚本\x20v2.1\x20(完全统一版)\x20已启动。'];_0x4724=function(){return _0x1f5d7d;};return _0x4724();}(function(_0x218c00,_0x29038f){const _0x456ef6=_0x3c0b,_0x21f453=_0x218c00();while(!![]){try{const _0xb75e1f=-parseInt(_0x456ef6(0x156))/0x1+-parseInt(_0x456ef6(0x155))/0x2*(parseInt(_0x456ef6(0x152))/0x3)+-parseInt(_0x456ef6(0x149))/0x4+-parseInt(_0x456ef6(0x146))/0x5*(parseInt(_0x456ef6(0x14d))/0x6)+-parseInt(_0x456ef6(0x16e))/0x7+-parseInt(_0x456ef6(0x167))/0x8+parseInt(_0x456ef6(0x165))/0x9;if(_0xb75e1f===_0x29038f)break;else _0x21f453['push'](_0x21f453['shift']());}catch(_0x460fd6){_0x21f453['push'](_0x21f453['shift']());}}}(_0x4724,0xa199c),(function(){'use strict';const _0x409bcd=_0x3c0b;GM_addStyle(_0x409bcd(0x169));function _0x3bd78b(_0xcb7ebd){const _0x4eb606=_0x409bcd;if(!_0xcb7ebd)return _0x4eb606(0x172);try{const _0x42d749=new URL(_0xcb7ebd)[_0x4eb606(0x15e)],_0x4db5f7=_0x42d749[_0x4eb606(0x14a)](_0x42d749['lastIndexOf']('/')+0x1);return _0x4db5f7||_0x4eb606(0x172);}catch(_0x13944b){return'topmediai-video.mp4';}}function _0xedc53a(_0x957658,_0x237f6c,_0x4bc621){const _0x4294e6=_0x409bcd;if(!_0x957658||!_0x237f6c||_0x957658[_0x4294e6(0x177)][_0x4294e6(0x14f)])return;_0x957658['dataset'][_0x4294e6(0x14f)]=_0x4294e6(0x143);if(_0x957658[_0x4294e6(0x16d)]!=='BUTTON')return;_0x957658[_0x4294e6(0x164)](_0x4294e6(0x160),_0x299779=>{const _0x4921a4=_0x4294e6;_0x299779[_0x4921a4(0x14b)](),_0x299779['stopPropagation']();const _0x459c38=_0x957658[_0x4921a4(0x168)],_0x2136ac=_0x237f6c[_0x4921a4(0x151)](_0x4921a4(0x142)),_0x58e02b=_0x2136ac?_0x2136ac[_0x4921a4(0x148)]:_0x237f6c['src'];if(!_0x58e02b){console[_0x4921a4(0x147)](_0x4921a4(0x16a));return;}const _0x21a08f=_0x3bd78b(_0x58e02b);console[_0x4921a4(0x171)](_0x4921a4(0x153)+_0x4bc621+_0x4921a4(0x14e)+_0x21a08f),_0x957658[_0x4921a4(0x168)]='下载中...',_0x957658[_0x4921a4(0x163)]['add'](_0x4921a4(0x157)),fetch(_0x58e02b)[_0x4921a4(0x176)](_0x2986f3=>_0x2986f3[_0x4921a4(0x162)]())[_0x4921a4(0x176)](_0x4c80d5=>{const _0x22c5fd=_0x4921a4,_0x296e09=URL[_0x22c5fd(0x16b)](_0x4c80d5),_0x33ad1c=document[_0x22c5fd(0x15c)]('a');_0x33ad1c[_0x22c5fd(0x16c)][_0x22c5fd(0x161)]='none',_0x33ad1c[_0x22c5fd(0x166)]=_0x296e09,_0x33ad1c['setAttribute'](_0x22c5fd(0x14c),_0x21a08f),document[_0x22c5fd(0x144)][_0x22c5fd(0x16f)](_0x33ad1c),_0x33ad1c[_0x22c5fd(0x160)](),document[_0x22c5fd(0x144)][_0x22c5fd(0x174)](_0x33ad1c),URL[_0x22c5fd(0x145)](_0x296e09),console[_0x22c5fd(0x171)]('[Tampermonkey]\x20下载已触发\x20('+_0x4bc621+')');})[_0x4921a4(0x150)](_0x5e5b6b=>{const _0x4fe968=_0x4921a4;console['error'](_0x4fe968(0x15a),_0x5e5b6b),_0x957658[_0x4fe968(0x168)]='下载失败';})[_0x4921a4(0x159)](()=>{setTimeout(()=>{const _0x40d8d7=_0x3c0b;_0x957658['innerHTML']=_0x459c38,_0x957658[_0x40d8d7(0x163)][_0x40d8d7(0x173)]('is-downloading');},0x3e8);});},!![]),console[_0x4294e6(0x171)](_0x4294e6(0x170)+_0x4bc621+'\x20的下载按钮已成功绑定新功能。');}const _0x4acc2f=new MutationObserver(()=>{const _0x328726=_0x409bcd,_0x209b9d=document[_0x328726(0x151)]('.video-center-block');if(_0x209b9d){const _0x26508c=_0x209b9d[_0x328726(0x151)](_0x328726(0x15b)),_0x270746=_0x209b9d[_0x328726(0x151)](_0x328726(0x15f));_0x26508c&&_0x270746&&_0xedc53a(_0x270746,_0x26508c,_0x328726(0x175));}const _0x2b3b85=document[_0x328726(0x151)](_0x328726(0x158));if(_0x2b3b85){const _0x4d4d6c=_0x2b3b85[_0x328726(0x151)](_0x328726(0x15f)),_0x4a303a=_0x2b3b85[_0x328726(0x151)]('video');_0x4d4d6c&&_0x4a303a&&_0xedc53a(_0x4d4d6c,_0x4a303a,'Popup');}});_0x4acc2f[_0x409bcd(0x154)](document['body'],{'childList':!![],'subtree':!![]}),console[_0x409bcd(0x171)](_0x409bcd(0x15d));}()));
