@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         TopMediAI 视频下载器
 // @namespace    http://tampermonkey.net/
-// @version      1.21
+// @version      1.22
 // @description  在 TopMediAI 的文本转视频页面，当视频生成后自动添加一个下载按钮。
 // @author       Gemini
 // @match        *://www.topmediai.com/*
@@ -11,85 +11,132 @@
 // @updateURL    https://co.taotile.ltd/dl.js
 // @downloadURL  https://co.taotile.ltd/dl.js
 // ==/UserScript==
+
 (function() {
     'use strict';
 
-    // --- 功能1: 处理主页面的下载按钮 ---
-    function handleMainPageButton() {
-        const SCRIPT_ID = 'tampermonkey-download-button';
-        const regenerateBtn = document.querySelector('p.regenerate-btn');
-        const videoSource = document.querySelector('div.video-center video > source');
-
-        if (!regenerateBtn || !videoSource || !videoSource.src) {
-            return;
+    GM_addStyle(`
+        button.download-btn.is-downloading, a.download-btn.is-downloading {
+            pointer-events: none;
+            opacity: 0.8;
         }
+    `);
 
-        let downloadBtn = document.getElementById(SCRIPT_ID);
-
-        if (!downloadBtn) {
-            downloadBtn = document.createElement('a');
-            downloadBtn.id = SCRIPT_ID;
-            downloadBtn.className = regenerateBtn.className; // 保持风格一致
-            downloadBtn.style.marginLeft = '10px';
-            downloadBtn.innerHTML = `<span class="t-text-[12px] t-text-[#1C1D1F]">下载视频</span>`;
-            regenerateBtn.insertAdjacentElement('afterend', downloadBtn);
-            console.log('主页面下载按钮已创建。');
+    /**
+     * 从 URL 中提取文件名
+     * @param {string} url - 视频链接
+     * @returns {string} - 文件名
+     */
+    function getFilenameFromUrl(url) {
+        if (!url) return 'topmediai-video.mp4';
+        try {
+            const pathname = new URL(url).pathname;
+            return pathname.substring(pathname.lastIndexOf('/') + 1);
+        } catch (e) {
+            return 'topmediai-video.mp4';
         }
-
-        downloadBtn.href = videoSource.src;
-        downloadBtn.setAttribute('download', 'topmediai-video.mp4');
     }
 
-    // --- 功能2: (新增) 修正弹出窗口的下载按钮 ---
-    function handlePopupButton() {
-        // 查找弹出窗口的容器
-        const popupBody = document.querySelector('.el-dialog__body');
-        if (!popupBody) {
-            return; // 弹窗未打开
-        }
-
-        // 在弹窗内查找视频和下载按钮
-        const buttonInPopup = popupBody.querySelector('button.download-btn');
-        const videoInPopup = popupBody.querySelector('video');
-
-        // 如果没有找到按钮或视频，或者按钮已经被我们替换过了 (变成了<a>标签)，则退出
-        if (!buttonInPopup || !videoInPopup || !videoInPopup.src || buttonInPopup.tagName !== 'BUTTON') {
+    /**
+     * 核心函数：为按钮绑定强制下载事件。
+     * @param {Element} button - 目标按钮元素。
+     * @param {Element} video - 目标视频元素。
+     * @param {string} context - 日志上下文。
+     */
+    function setupForceDownload(button, video, context) {
+        if (!button || !video || button.dataset.downloadHandlerAttached) {
             return;
         }
+        button.dataset.downloadHandlerAttached = 'true';
 
-        console.log('检测到弹窗下载按钮，开始修正...');
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
 
-        // 创建一个新的<a>标签作为下载链接
-        const newDownloadLink = document.createElement('a');
+            const originalButtonContent = button.innerHTML;
+            const sourceElement = video.querySelector('source');
+            const videoSrc = sourceElement ? sourceElement.src : video.src;
 
-        // 1. 复制所有样式，让新链接看起来和旧按钮一模一样
-        newDownloadLink.className = buttonInPopup.className;
+            if (!videoSrc) {
+                console.error('[Tampermonkey] 无法找到有效的视频源链接。');
+                return;
+            }
 
-        // 2. 复制按钮内部内容 (包括图标和文字)
-        newDownloadLink.innerHTML = buttonInPopup.innerHTML;
+            // *** 改动点：从URL中动态获取文件名 ***
+            const fileName = getFilenameFromUrl(videoSrc);
 
-        // 3. 设置链接地址和下载属性
-        newDownloadLink.href = videoInPopup.src;
-        newDownloadLink.setAttribute('download', 'topmediai-popup-video.mp4');
+            console.log(`[Tampermonkey] 开始强制下载 (${context}): ${fileName}`);
+            button.innerHTML = '下载中...';
+            button.classList.add('is-downloading');
 
-        // 4. 用新的<a>链接替换掉旧的<button>按钮
-        buttonInPopup.parentNode.replaceChild(newDownloadLink, buttonInPopup);
+            fetch(videoSrc)
+                .then(response => response.blob())
+                .then(blob => {
+                    const tempUrl = URL.createObjectURL(blob);
+                    const tempLink = document.createElement('a');
+                    tempLink.style.display = 'none';
+                    tempLink.href = tempUrl;
+                    tempLink.setAttribute('download', fileName); // 使用原始文件名
 
-        console.log('弹窗下载按钮已修正为直接下载链接。');
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+
+                    document.body.removeChild(tempLink);
+                    URL.revokeObjectURL(tempUrl);
+                    console.log(`[Tampermonkey] 下载已触发 (${context})`);
+                })
+                .catch(err => {
+                    console.error('下载失败:', err);
+                    button.innerHTML = '下载失败';
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        button.innerHTML = originalButtonContent;
+                        button.classList.remove('is-downloading');
+                    }, 1000);
+                });
+        }, true);
+
+        console.log(`[Tampermonkey] ${context} 的下载按钮已成功绑定新功能。`);
     }
 
-    // --- 核心逻辑 ---
-    // 使用 MutationObserver 监视整个页面的变化
+    // --- 监视器逻辑 ---
     const observer = new MutationObserver(() => {
-        handleMainPageButton(); // 检查主页面按钮
-        handlePopupButton();    // 同时检查弹窗按钮
+
+        // --- 主页面逻辑 ---
+        const mainVideo = document.querySelector('video[controls]:not(.el-dialog__body video)');
+        if (mainVideo) {
+            const container = mainVideo.closest('.global-scrollbar-hide');
+            if (container) {
+                const mainButton = container.querySelector('button.download-btn');
+                if (mainButton) {
+                    setupForceDownload(mainButton, mainVideo, 'Main Page');
+                }
+            }
+        }
+
+        // --- 弹窗逻辑 ---
+        const popupContainer = document.querySelector('.el-dialog__body');
+        if (popupContainer) {
+             const button = popupContainer.querySelector('button.download-btn');
+             const video = popupContainer.querySelector('video');
+             if (button && video && video.src && button.tagName === 'BUTTON') {
+                 const newLink = document.createElement('a');
+                 newLink.className = button.className;
+                 newLink.innerHTML = button.innerHTML;
+                 newLink.href = video.src;
+
+                 // *** 改动点：从URL中动态获取文件名 ***
+                 const fileName = getFilenameFromUrl(video.src);
+                 newLink.setAttribute('download', fileName);
+
+                 button.parentNode.replaceChild(newLink, button);
+                 console.log('[Tampermonkey] 弹窗下载按钮已修正。');
+             }
+        }
     });
 
-    // 启动观察器
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
+    observer.observe(document.body, { childList: true, subtree: true });
 
-    console.log('TopMediAI 下载脚本 v1.2 已启动。');
+    console.log('TopMediAI 下载脚本 v1.9 (保留原始文件名版) 已启动。');
 })();
