@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         TopMediAI 视频下载器
+// @name         TopMediAI 视频下载器(test)
 // @namespace    http://tampermonkey.net/
-// @version      1.25
+// @version      1.26
 // @description  在 TopMediAI 的文本转视频页面，当视频生成后自动添加一个下载按钮。
 // @author       haway
 // @match        *.topmediai.com/*
@@ -11,4 +11,121 @@
 // @updateURL    https://co.taotile.ltd/dl.js
 // @downloadURL  https://co.taotile.ltd/dl.js
 // ==/UserScript==
-(function(_0x5f57f5,_0x52aceb){const _0x439c34=_0x49bd,_0x25712e=_0x5f57f5();while(!![]){try{const _0x43c625=-parseInt(_0x439c34(0x1c4))/0x1+-parseInt(_0x439c34(0x1a1))/0x2+parseInt(_0x439c34(0x1a6))/0x3+-parseInt(_0x439c34(0x1b3))/0x4*(-parseInt(_0x439c34(0x1ce))/0x5)+-parseInt(_0x439c34(0x1d8))/0x6+-parseInt(_0x439c34(0x1cf))/0x7*(-parseInt(_0x439c34(0x1af))/0x8)+parseInt(_0x439c34(0x1a7))/0x9*(-parseInt(_0x439c34(0x1d9))/0xa);if(_0x43c625===_0x52aceb)break;else _0x25712e['push'](_0x25712e['shift']());}catch(_0x3f9e48){_0x25712e['push'](_0x25712e['shift']());}}}(_0x49d3,0x1dfe3),(function(){'use strict';const _0x2ca9ab=_0x49bd;GM_addStyle('\x0a\x20\x20\x20\x20\x20\x20\x20\x20button.download-btn.is-downloading,\x20a.download-btn.is-downloading\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20pointer-events:\x20none;\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20opacity:\x200.8;\x0a\x20\x20\x20\x20\x20\x20\x20\x20}\x0a\x20\x20\x20\x20');function _0x4f6e52(_0x1d2b62){const _0x1a8df6=_0x49bd;if(!_0x1d2b62)return _0x1a8df6(0x1c3);try{const _0xdb2879=new URL(_0x1d2b62)[_0x1a8df6(0x1c8)],_0x3ade17=_0xdb2879[_0x1a8df6(0x1ba)](_0xdb2879[_0x1a8df6(0x1aa)]('/')+0x1);return _0x3ade17||_0x1a8df6(0x1c3);}catch(_0x492722){return _0x1a8df6(0x1c3);}}function _0x2539f3(_0x44bafa,_0x535905,_0x431b31){const _0x3eebb1=_0x49bd;if(!_0x44bafa||!_0x535905||_0x44bafa[_0x3eebb1(0x1da)][_0x3eebb1(0x1bf)])return;_0x44bafa['dataset'][_0x3eebb1(0x1bf)]=_0x3eebb1(0x1b9);if(_0x44bafa['tagName']!==_0x3eebb1(0x1d6))return;_0x44bafa[_0x3eebb1(0x1ab)](_0x3eebb1(0x1c6),_0x59f7f1=>{const _0x5d2e9b=_0x3eebb1;_0x59f7f1[_0x5d2e9b(0x1a9)](),_0x59f7f1[_0x5d2e9b(0x1b4)]();const _0x1a1a5f=_0x44bafa[_0x5d2e9b(0x1d3)],_0x2577ea=_0x535905[_0x5d2e9b(0x1a4)]('source'),_0x476e1a=_0x2577ea?_0x2577ea['src']:_0x535905[_0x5d2e9b(0x1c7)];if(!_0x476e1a){console[_0x5d2e9b(0x1db)](_0x5d2e9b(0x1ad));return;}const _0x553726=_0x4f6e52(_0x476e1a);console[_0x5d2e9b(0x1a5)](_0x5d2e9b(0x1a0)+_0x431b31+_0x5d2e9b(0x1dc)+_0x553726),_0x44bafa[_0x5d2e9b(0x1d3)]=_0x5d2e9b(0x1cc),_0x44bafa[_0x5d2e9b(0x1b8)]['add']('is-downloading'),fetch(_0x476e1a)[_0x5d2e9b(0x1b5)](_0x9b1d81=>_0x9b1d81[_0x5d2e9b(0x1ac)]())[_0x5d2e9b(0x1b5)](_0x9f8b44=>{const _0x5723a3=_0x5d2e9b,_0x23e9a7=URL[_0x5723a3(0x1b6)](_0x9f8b44),_0x3e39a8=document[_0x5723a3(0x1bd)]('a');_0x3e39a8[_0x5723a3(0x1a8)][_0x5723a3(0x1d5)]=_0x5723a3(0x1b1),_0x3e39a8[_0x5723a3(0x1cb)]=_0x23e9a7,_0x3e39a8['setAttribute']('download',_0x553726),document[_0x5723a3(0x1cd)][_0x5723a3(0x1d4)](_0x3e39a8),_0x3e39a8['click'](),document[_0x5723a3(0x1cd)][_0x5723a3(0x1c1)](_0x3e39a8),URL[_0x5723a3(0x1ca)](_0x23e9a7),console[_0x5723a3(0x1a5)](_0x5723a3(0x1c5)+_0x431b31+')');})[_0x5d2e9b(0x1d2)](_0x4dd35f=>{const _0x238661=_0x5d2e9b;console[_0x238661(0x1db)](_0x238661(0x1ae),_0x4dd35f),_0x44bafa[_0x238661(0x1d3)]=_0x238661(0x1bb);})[_0x5d2e9b(0x1bc)](()=>{setTimeout(()=>{const _0x54cd9d=_0x49bd;_0x44bafa[_0x54cd9d(0x1d3)]=_0x1a1a5f,_0x44bafa['classList'][_0x54cd9d(0x1c2)](_0x54cd9d(0x1a3));},0x3e8);});},!![]),console[_0x3eebb1(0x1a5)](_0x3eebb1(0x1b2)+_0x431b31+_0x3eebb1(0x1c0));}const _0x2f0e7b=new MutationObserver(()=>{const _0x2889df=_0x49bd,_0x93bdeb=document[_0x2889df(0x1a4)](_0x2889df(0x1be));if(_0x93bdeb){const _0x59db71=_0x93bdeb[_0x2889df(0x1a4)](_0x2889df(0x1b7)),_0x6db471=_0x93bdeb['querySelector']('button.download-btn');_0x59db71&&_0x6db471&&_0x2539f3(_0x6db471,_0x59db71,_0x2889df(0x1a2));}const _0x128648=document['querySelector'](_0x2889df(0x1d0));if(_0x128648){const _0x2b4c6f=_0x128648[_0x2889df(0x1a4)](_0x2889df(0x1b0)),_0x4f65af=_0x128648[_0x2889df(0x1a4)](_0x2889df(0x1d1));_0x2b4c6f&&_0x4f65af&&_0x2539f3(_0x2b4c6f,_0x4f65af,_0x2889df(0x1c9));}});_0x2f0e7b[_0x2ca9ab(0x1d7)](document[_0x2ca9ab(0x1cd)],{'childList':!![],'subtree':!![]}),console['log']('TopMediAI\x20下载脚本\x20v2.1\x20(完全统一版)\x20已启动。');}()));function _0x49bd(_0x1f1cef,_0x47b1d6){const _0x49d36f=_0x49d3();return _0x49bd=function(_0x49bd96,_0x24013a){_0x49bd96=_0x49bd96-0x1a0;let _0x549b3d=_0x49d36f[_0x49bd96];return _0x549b3d;},_0x49bd(_0x1f1cef,_0x47b1d6);}function _0x49d3(){const _0x53662a=['16GDJEEs','button.download-btn','none','[Tampermonkey]\x20','40dUGPrn','stopPropagation','then','createObjectURL','video[controls]','classList','true','substring','下载失败','finally','createElement','.video-center-block','downloadHandlerAttached','\x20的下载按钮已成功绑定新功能。','removeChild','remove','topmediai-video.mp4','235080NvsHbT','[Tampermonkey]\x20下载已触发\x20(','click','src','pathname','Popup','revokeObjectURL','href','下载中...','body','23050lMBgFz','779086NKqEKg','.el-dialog__body','video','catch','innerHTML','appendChild','display','BUTTON','observe','17034LygsWl','40MAcHJI','dataset','error','):\x20','[Tampermonkey]\x20开始强制下载\x20(','28908wbrcRp','Main\x20Page','is-downloading','querySelector','log','391596bpNNcy','54009pelTff','style','preventDefault','lastIndexOf','addEventListener','blob','[Tampermonkey]\x20无法找到有效的视频源链接。','下载失败:'];_0x49d3=function(){return _0x53662a;};return _0x49d3();}
+(function() {
+    'use strict';
+    
+    console.log('%cTopMediAI 下载脚本 v4.1 (调试版) 已启动。', 'color: blue; font-size: 16px; font-weight: bold;');
+
+    GM_addStyle(`
+        button.download-btn.is-downloading, a.download-btn.is-downloading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+    `);
+
+    function getFilenameFromUrl(url) {
+        if (!url) return 'topmediai-video.mp4';
+        try {
+            const pathname = new URL(url).pathname;
+            const filename = pathname.substring(pathname.lastIndexOf('/') + 1);
+            return filename || 'topmediai-video.mp4';
+        } catch (e) {
+            return 'topmediai-video.mp4';
+        }
+    }
+
+    function setupForceDownload(button, video, context) {
+        if (!button || !video || button.dataset.downloadHandlerAttached) {
+            return;
+        }
+        console.log(`%c[DEBUG] setupForceDownload 已调用!`, 'color: green; font-weight: bold;', { context, button, video });
+        button.dataset.downloadHandlerAttached = 'true';
+        
+        if (button.tagName !== 'BUTTON') return;
+
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const originalButtonContent = button.innerHTML;
+            const sourceElement = video.querySelector('source');
+            const videoSrc = sourceElement ? sourceElement.src : video.src;
+            if (!videoSrc) {
+                console.error('[Tampermonkey] 无法找到有效的视频源链接。');
+                return;
+            }
+            const fileName = getFilenameFromUrl(videoSrc);
+            console.log(`[Tampermonkey] 开始强制下载 (${context}): ${fileName}`);
+            button.innerHTML = '下载中...';
+            button.classList.add('is-downloading');
+            fetch(videoSrc)
+                .then(response => response.blob())
+                .then(blob => {
+                    const tempUrl = URL.createObjectURL(blob);
+                    const tempLink = document.createElement('a');
+                    tempLink.style.display = 'none';
+                    tempLink.href = tempUrl;
+                    tempLink.setAttribute('download', fileName);
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                    URL.revokeObjectURL(tempUrl);
+                })
+                .catch(err => {
+                    console.error('下载失败:', err);
+                    button.innerHTML = '下载失败';
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        button.innerHTML = originalButtonContent;
+                        button.classList.remove('is-downloading');
+                    }, 1000);
+                });
+        }, true);
+        console.log(`%c[DEBUG] ${context} 的下载按钮已成功绑定功能。`, 'color: green');
+    }
+
+    /**
+     * 循环扫描并处理所有下载按钮
+     */
+    function processDownloadButtons() {
+        console.log('%c--- [DEBUG] 页面发生变动，开始扫描下载按钮 ---', 'color: orange');
+        
+        const buttonsToProcess = document.querySelectorAll('button.download-btn:not([data-download-handler-attached])');
+        console.log(`[DEBUG] 扫描结果：找到 ${buttonsToProcess.length} 个尚未处理的下载按钮。`);
+
+        if (buttonsToProcess.length === 0) {
+            const allButtons = document.querySelectorAll('.download-btn');
+            console.log(`[DEBUG] 页面上总共有 ${allButtons.length} 个 class 含 "download-btn" 的元素。`);
+        }
+
+        buttonsToProcess.forEach((button, index) => {
+            console.log(`[DEBUG] 正在处理第 ${index + 1} 个按钮:`, button);
+            const popupContainer = button.closest('.el-dialog__body');
+
+            if (popupContainer) {
+                console.log('[DEBUG] 判断：此按钮在弹窗内。');
+                const video = popupContainer.querySelector('video');
+                if (video) {
+                    console.log('[DEBUG] 在弹窗内找到了对应的 video 元素。准备绑定功能...');
+                    setupForceDownload(button, video, 'Popup');
+                } else {
+                    console.error('[DEBUG] 错误：在弹窗内找到了按钮，但没找到 video 元素！');
+                }
+            } else {
+                console.log('[DEBUG] 判断：此按钮在主页面。');
+                const mainVideo = document.querySelector('video[controls]:not(.el-dialog__body video)');
+                if (mainVideo) {
+                    console.log('[DEBUG] 在主页面找到了带 controls 的 video 元素。准备绑定功能...');
+                    setupForceDownload(button, mainVideo, 'Main Page');
+                } else {
+                    console.error('[DEBUG] 错误：在主页面找到了按钮，但没找到带 controls 的 video 元素！');
+                }
+            }
+        });
+        console.log('%c--- [DEBUG] 本次扫描结束 ---', 'color: orange');
+    }
+
+    const observer = new MutationObserver(processDownloadButtons);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+})();
