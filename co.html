@@ -338,7 +338,7 @@ a.rel = 'noopener noreferrer';
                 updateResult("邮箱已存在，正在获取邮件...");
                 await fetchEmails(mailboxPrefix);
             } else {
-                const fullEmail = mailboxPrefix + '@mdzz.uk';
+                const fullEmail = mailboxPrefix + '@zaunist.com';
                 const copySuccessStatus = await copyToClipboard(fullEmail);
                 const masterPrefix = allowedMailboxes.find(p => mailboxPrefix.startsWith(p));
                 const fullEmailAddress = mailboxPrefix + '@zaunist.com';
@@ -414,7 +414,7 @@ a.rel = 'noopener noreferrer';
                         updateResult("获取邮件详情失败");
                     }
                 } else {
-                   const fullEmail = mailboxId + '@mdzz.uk';
+                   const fullEmail = mailboxId + '@zaunist.com';
                     updateResult(`没有找到邮件\n\n手动复制重试\n邮箱：${fullEmail}\n网址：https://www.lovart.ai?referralCode=358bzLA`);
                 }
             } else {
