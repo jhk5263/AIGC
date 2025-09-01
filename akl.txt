@@ -15,6 +15,7 @@ fx6e9x
 
 in244
 inh0k
+in769x
 inft3
 inssi
 iny41
